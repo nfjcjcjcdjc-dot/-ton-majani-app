@@ -14,7 +14,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 16px 16px 90px 16px;
+      padding: 16px 16px 95px 16px;
       user-select: none;
     }
     .header {
@@ -29,25 +29,44 @@
       border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 24px;
       padding: 22px 18px; text-align: center;
       box-shadow: 0 10px 35px rgba(0, 136, 204, 0.15); margin-top: 16px;
+      display: none;
     }
+    input[name="tabs"] { display: none; }
+    #r-mine:checked ~ .content-area #tab-mine { display: block; }
+    #r-tasks:checked ~ .content-area #tab-tasks { display: block; }
+    #r-friends:checked ~ .content-area #tab-friends { display: block; }
+    #r-withdraw:checked ~ .content-area #tab-withdraw { display: block; }
+
+    #r-mine:checked ~ .bottom-nav label[for="r-mine"],
+    #r-tasks:checked ~ .bottom-nav label[for="r-tasks"],
+    #r-friends:checked ~ .bottom-nav label[for="r-friends"],
+    #r-withdraw:checked ~ .bottom-nav label[for="r-withdraw"] { color: #38bdf8; }
+
     .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
     .badge-unverified { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
     .badge-verified { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
     .balance-label { font-size: 13px; color: #94a3b8; }
     .balance-value { font-size: 34px; font-weight: 900; margin: 6px 0 18px; }
     .balance-value span { color: #38bdf8; font-size: 18px; }
-    .miner-box { background: rgba(9, 13, 22, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px; padding: 15px; margin-bottom: 18px; }
+    .miner-box { background: rgba(9, 13, 22, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px; padding: 15px; margin-bottom: 16px; }
     .miner-top { display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
     .speed-val { color: #34d399; font-weight: 700; }
     .state-off { color: #fbbf24; font-weight: 700; }
     .state-on { color: #34d399; font-weight: 700; }
     .unclaimed-val { font-size: 26px; font-weight: 800; font-family: monospace; color: #7dd3fc; margin: 4px 0; }
-    .btn { width: 100%; padding: 15px; border: none; border-radius: 14px; font-size: 14px; font-weight: 800; color: #fff; cursor: pointer; touch-action: manipulation; }
+    .btn { display: block; width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 14px; font-weight: 800; color: #fff; cursor: pointer; text-decoration: none; text-align: center; }
     .btn:active { transform: scale(0.97); }
     .btn-verify { background: linear-gradient(90deg, #0284c7, #2563eb); }
     .btn-claim { background: linear-gradient(90deg, #059669, #0d9488); }
-    .btn-small { padding: 8px 14px; font-size: 12px; border-radius: 10px; width: auto; background: #0284c7; }
+    .btn-boost { background: linear-gradient(90deg, #d97706, #ea580c); margin-top: 8px; }
+    .btn-small { display: inline-block; padding: 8px 16px; font-size: 12px; border-radius: 10px; width: auto; background: #0284c7; color: #fff; text-decoration: none; font-weight: 700; border: none; cursor: pointer; }
     .btn-done { background: #1e293b; color: #64748b; }
+    .boost-box {
+      background: rgba(217, 119, 6, 0.1); border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 18px; padding: 14px; margin-top: 16px; text-align: right;
+    }
+    .boost-title { font-size: 14px; font-weight: 800; color: #fbbf24; margin-bottom: 4px; }
+    .boost-desc { font-size: 12px; color: #cbd5e1; margin-bottom: 10px; line-height: 1.5; }
     .task-item {
       display: flex; justify-content: space-between; align-items: center;
       background: rgba(9, 13, 22, 0.65); border: 1px solid rgba(255,255,255,0.08);
@@ -55,22 +74,44 @@
     }
     .task-title { font-size: 14px; font-weight: 700; color: #f8fafc; }
     .task-reward { font-size: 12px; color: #34d399; margin-top: 3px; font-weight: 600; }
-    .ref-box { background: rgba(9, 13, 22, 0.75); padding: 12px; border-radius: 12px; font-size: 11px; color: #7dd3fc; word-break: break-all; margin: 12px 0; border: 1px dashed rgba(56, 189, 248, 0.4); }
+    .ref-box { background: rgba(9, 13, 22, 0.75); padding: 12px; border-radius: 12px; font-size: 12px; color: #7dd3fc; word-break: break-all; margin: 12px 0; border: 1px dashed rgba(56, 189, 248, 0.4); user-select: all; }
+    .input-field {
+      width: 100%; padding: 12px 14px; border-radius: 12px;
+      background: rgba(9, 13, 22, 0.85); border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #fff; font-size: 14px; margin-bottom: 10px; outline: none; text-align: right;
+    }
+    .cond-box {
+      background: rgba(9, 13, 22, 0.65); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 14px; margin-bottom: 16px; text-align: right; font-size: 13px; line-height: 1.8;
+    }
     .bottom-nav {
       position: fixed; bottom: 12px; left: 16px; right: 16px;
       background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 20px; display: flex; justify-content: space-around; padding: 10px 6px;
+      border-radius: 20px; display: flex; justify-content: space-around; padding: 10px 4px;
       z-index: 9999;
     }
-    .nav-item { background: none; border: none; color: #64748b; font-size: 12px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; touch-action: manipulation; }
-    .nav-item.active { color: #38bdf8; }
-    .nav-icon { font-size: 20px; }
+    .nav-item { color: #64748b; font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; }
+    .nav-icon { font-size: 19px; }
     .hidden { display: none !important; }
+    #toast {
+      position: fixed; top: 18px; left: 16px; right: 16px;
+      background: #0284c7; color: #fff; padding: 12px 16px;
+      border-radius: 14px; font-size: 13px; font-weight: 700;
+      text-align: center; z-index: 99999; box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      display: none;
+    }
   </style>
 </head>
 <body>
 
-  <div>
+  <div id="toast"></div>
+
+  <input type="radio" name="tabs" id="r-mine" checked>
+  <input type="radio" name="tabs" id="r-tasks">
+  <input type="radio" name="tabs" id="r-friends">
+  <input type="radio" name="tabs" id="r-withdraw">
+
+  <div class="content-area">
     <div class="header">
       <div>
         <div class="app-title">تون مجاني 💎</div>
@@ -79,6 +120,7 @@
       <div id="ton-connect"></div>
     </div>
 
+    <!-- 1. قسم التعدين -->
     <div id="tab-mine" class="card">
       <div id="status-badge" class="badge badge-unverified">الحساب غير موثق ⚠️</div>
       <div class="balance-label">إجمالي رصيدك القابل للسحب</div>
@@ -86,7 +128,7 @@
 
       <div class="miner-box">
         <div class="miner-top">
-          <span>السرعة: <span id="speed-display" class="speed-val">0.5 TON / يوم</span></span>
+          <span>السرعة: <span id="speed-display" class="speed-val">0.500 TON / يوم</span></span>
           <span id="mining-state" class="state-off">متوقف ⏸️</span>
         </div>
         <div id="unclaimed-display" class="unclaimed-val">0.000000</div>
@@ -99,94 +141,43 @@
       <button type="button" id="claim-btn" class="btn btn-claim hidden">
         جمع الأرباح إلى الرصيد (Claim) 💰
       </button>
+
+      <!-- قسم تسريع التعدين 7% -->
+      <div class="boost-box">
+        <div class="boost-title">🚀 تسريع التعدين (+7% لكل 1 TON)</div>
+        <div class="boost-desc">ضاعف أرباحك اليومية بإيداع 1 TON أو أكثر لزيادة سرعة التعدين بنسبة 7% عن كل عملة.</div>
+        <input type="number" id="boost-amount-input" class="input-field" min="1" step="0.5" value="1" placeholder="الحد الأدنى 1 TON..." style="margin-bottom:6px; border-color: rgba(245, 158, 11, 0.5);" />
+        <button type="button" id="boost-btn" class="btn btn-boost">تسريع التعدين الآن (+7%) 🔥</button>
+      </div>
     </div>
 
-    <div id="tab-tasks" class="card hidden">
+    <!-- 2. قسم المهام -->
+    <div id="tab-tasks" class="card">
       <h2 style="font-size:18px; color:#38bdf8; margin-bottom:6px;">المهام اليومية 📋</h2>
       <p style="font-size:12px; color:#94a3b8; margin-bottom:16px;">أكمل المهام التالية لزيادة رصيدك مجاناً</p>
-      <div id="tasks-list"></div>
+      <div id="tasks-list">
+        <div class="task-item">
+          <div>
+            <div class="task-title">اشترك في قناة توصيات بيناري أوبشن 📈</div>
+            <div class="task-reward">+0.003 TON</div>
+          </div>
+          <a href="https://t.me" target="_blank" class="btn-small" onclick="completeTask('join_forexgood45', 0.003, this)">ابدأ</a>
+        </div>
+        <div class="task-item">
+          <div>
+            <div class="task-title">شارك التطبيق مع صديق</div>
+            <div class="task-reward">+0.02 TON</div>
+          </div>
+          <a id="share-task-link" href="https://t.me" target="_blank" class="btn-small" onclick="completeTask('share_story', 0.02, this)">ابدأ</a>
+        </div>
+      </div>
     </div>
 
-    <div id="tab-friends" class="card hidden">
+    <!-- 3. قسم الأصدقاء -->
+    <div id="tab-friends" class="card">
       <h2 style="font-size:18px; color:#38bdf8; margin-bottom:6px;">دعوة الأصدقاء 👥</h2>
       <p style="font-size:12px; color:#94a3b8; margin-bottom:14px;">
         احصل على <strong style="color:#34d399;">+0.1 TON/يوم</strong> سرعة تعدين إضافية عن كل صديق يوثق حسابه!
       </p>
       <div style="background:rgba(9,13,22,0.65); padding:14px; border-radius:16px; margin-bottom:14px;">
         <div style="font-size:12px; color:#94a3b8;">عدد أصدقائك الموثقين</div>
-        <div id="ref-count" style="font-size:28px; font-weight:900; color:#fff; margin-top:4px;">0</div>
-      </div>
-      <div style="font-size:12px; color:#94a3b8; text-align:right;">رابط الدعوة الخاص بك:</div>
-      <div id="ref-link" class="ref-box">https://t.me</div>
-      <button type="button" id="copy-ref-btn" class="btn btn-verify">نسخ رابط الدعوة ومشاركته 📤</button>
-    </div>
-  </div>
-
-  <div class="bottom-nav">
-    <button type="button" id="nav-mine" class="nav-item active">
-      <span class="nav-icon">⛏️</span><span>التعدين</span>
-    </button>
-    <button type="button" id="nav-tasks" class="nav-item">
-      <span class="nav-icon">📋</span><span>المهام</span>
-    </button>
-    <button type="button" id="nav-friends" class="nav-item">
-      <span class="nav-icon">👥</span><span>الأصدقاء</span>
-    </button>
-  </div>
-
-  <script>
-    const SUPABASE_URL = 'https://supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_LeqAYFFbNWS7oKgtlmWaUg_2xkbtBpl';
-    const MY_WALLET = 'UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO';
-    const BOT_LINK = 'https://t.me';
-
-    const TASKS = [
-      { id: 'join_channel', title: 'اشترك في قناة التطبيق الرسمية', reward: 0.05, url: 'https://t.me' },
-      { id: 'join_chat', title: 'انضم إلى مجموعة المجتمع', reward: 0.03, url: 'https://t.me' },
-      { id: 'share_story', title: 'شارك التطبيق مع صديق', reward: 0.02, url: 'https://t.me' + BOT_LINK }
-    ];
-
-    let tgUser = { id: 123456789, username: 'مستخدم_تجريبي' };
-    let startParam = null;
-    let myRefLink = BOT_LINK + '?startapp=' + tgUser.id;
-    let db = null;
-    let userData = { balance: 0, mining_speed: 0.5, referrals_count: 0, completed_tasks: [], is_verified: false };
-    let connectedWallet = null;
-    let tonConnectUI = null;
-
-    // ربط أزرار التنقل مباشرة
-    function showTab(tabName) {
-      document.getElementById('tab-mine').classList.add('hidden');
-      document.getElementById('tab-tasks').classList.add('hidden');
-      document.getElementById('tab-friends').classList.add('hidden');
-      document.getElementById('tab-' + tabName).classList.remove('hidden');
-
-      document.getElementById('nav-mine').classList.remove('active');
-      document.getElementById('nav-tasks').classList.remove('active');
-      document.getElementById('nav-friends').classList.remove('active');
-      document.getElementById('nav-' + tabName).classList.add('active');
-    }
-
-    document.getElementById('nav-mine').addEventListener('click', () => showTab('mine'));
-    document.getElementById('nav-tasks').addEventListener('click', () => showTab('tasks'));
-    document.getElementById('nav-friends').addEventListener('click', () => showTab('friends'));
-
-    // قراءة بيانات المستخدم من رابط تيليجرام
-    try {
-      const hashParams = new URLSearchParams(window.location.hash.slice(1));
-      const tgWebAppData = hashParams.get('tgWebAppData');
-      if (tgWebAppData) {
-        const initParams = new URLSearchParams(tgWebAppData);
-        const userStr = initParams.get('user');
-        if (userStr) {
-          tgUser = JSON.parse(userStr);
-          document.getElementById('user-name').innerText = '@' + (tgUser.username || tgUser.first_name || tgUser.id);
-          myRefLink = BOT_LINK + '?startapp=' + tgUser.id;
-        }
-        startParam = initParams.get('start_param');
-      }
-    } catch (e) {}
-
-    document.getElementById('ref-link').innerText = myRefLink;
-
-    document.getElementById('copy-ref-btn').addEventListener('click', () => {
