@@ -4,59 +4,68 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>تون مجاني</title>
-<!-- استدعاء مكتبات تيليجرام و Supabase و TonConnect -->
 <script src="https://telegram.org"></script>
-<script src="https://jsdelivr.net"></script>
-<script src="https://unpkg.com"></script>
-
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif}
-body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 90px 14px}
 .header{display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px 15px;border-radius:16px;border:1px solid #38bdf844}
-.card{background:#111827;border:1px solid #38bdf844;border-radius:20px;padding:20px 16px;text-align:center;margin-top:14px;display:none}
+.card{background:#111827;border:1px solid #38bdf844;border-radius:20px;padding:18px 15px;text-align:center;margin-top:14px;display:none}
 .card.active{display:block}
-.badge{display:inline-block;padding:5px 12px;border-radius:15px;font-size:12px;font-weight:bold;margin-bottom:12px;background:#f59e0b22;color:#fbbf24;border:1px solid #f59e0b66}
+.badge{display:inline-block;padding:5px 12px;border-radius:15px;font-size:12px;font-weight:bold;margin-bottom:10px;background:#f59e0b22;color:#fbbf24;border:1px solid #f59e0b66}
 .badge.ok{background:#10b98122;color:#34d399;border-color:#10b98166}
-.bal{font-size:32px;font-weight:bold;margin:6px 0 16px}
+.bal{font-size:30px;font-weight:bold;margin:6px 0 14px}
 .miner-box{background:#090d16;border:1px solid #ffffff15;border-radius:16px;padding:14px;margin-bottom:14px}
 .miner-top{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-bottom:8px}
 .unclaimed{font-size:26px;font-weight:bold;font-family:monospace;color:#7dd3fc}
 .btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:14px;font-weight:bold;color:#fff;cursor:pointer;text-decoration:none;text-align:center}
+.btn:active{opacity:0.8;transform:scale(0.99)}
 .btn-blue{background:#0284c7}
 .btn-green{background:#059669}
 .btn-orange{background:#d97706;margin-top:8px}
 .btn-sm{display:inline-block;padding:8px 14px;font-size:12px;border-radius:8px;background:#0284c7;color:#fff;text-decoration:none;font-weight:bold;border:none;cursor:pointer}
 .btn-done{background:#334155;color:#94a3b8;pointer-events:none}
-.boost-box{background:#d9770618;border:1px solid #f59e0b55;border-radius:16px;padding:14px;margin-top:16px;text-align:right}
+.boost-box{background:#d9770618;border:1px solid #f59e0b55;border-radius:16px;padding:14px;margin-top:14px;text-align:right}
 .task-item{display:flex;justify-content:space-between;align-items:center;background:#090d16;border:1px solid #ffffff15;padding:12px;border-radius:14px;margin-bottom:10px;text-align:right}
 .inp{width:100%;padding:12px;border-radius:10px;background:#090d16;border:1px solid #38bdf855;color:#fff;font-size:14px;margin-bottom:10px;text-align:right}
 .ref-box{background:#090d16;padding:12px;border-radius:10px;font-size:12px;color:#7dd3fc;word-break:break-all;margin:10px 0;border:1px dashed #38bdf866}
-.bottom-nav{position:fixed;bottom:10px;left:12px;right:12px;background:#0f172a;border:1px solid #38bdf855;border-radius:18px;display:flex;padding:10px 4px;z-index:99999}
+.bottom-nav{position:fixed;bottom:10px;left:12px;right:12px;background:#0f172a;border:1px solid #38bdf855;border-radius:18px;display:flex;padding:10px 4px;z-index:9999}
 .nav-btn{flex:1;background:none;border:none;color:#64748b;font-size:11px;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
 .nav-btn.active{color:#38bdf8}
 .hidden{display:none!important}
-#toast{position:fixed;top:15px;left:15px;right:15px;background:#0284c7;color:#fff;padding:12px;border-radius:12px;font-size:13px;font-weight:bold;text-align:center;z-index:999999;display:none}
+#toast{position:fixed;top:15px;left:15px;right:15px;background:#0284c7;color:#fff;padding:12px;border-radius:12px;font-size:13px;font-weight:bold;text-align:center;z-index:99999;display:none}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;padding:16px;z-index:10000}
+.modal-box{background:#1e293b;border:1px solid #38bdf866;border-radius:18px;padding:18px;width:100%;max-width:360px;text-align:center}
 </style>
 </head>
 <body>
+
 <div id="toast"></div>
+
+<div id="pay-modal" class="modal">
+  <div class="modal-box">
+    <h3 id="m-title" style="color:#38bdf8;margin-bottom:8px;">تأكيد الدفع عبر TON</h3>
+    <p id="m-desc" style="font-size:13px;color:#cbd5e1;margin-bottom:12px;"></p>
+    <div id="m-wallet" class="ref-box" style="font-size:11px;">UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO</div>
+
+<button type="button" id="m-open-wallet" class="btn btn-blue" style="margin-bottom:8px;">الدفع عبر محفظة Tonkeeper 💎</button>
+    <button type="button" id="m-confirm" class="btn btn-green" style="margin-bottom:8px;">تأكيد إتمام التحويل ✅</button>
+    <button type="button" onclick="closeModal()" class="btn" style="background:#334155;">إلغاء</button>
+  </div>
+</div>
 
 <div class="header">
   <div>
     <div style="font-size:17px;font-weight:bold;color:#38bdf8;">تون مجاني 💎</div>
     <div id="u-name" style="font-size:12px;color:#94a3b8;">مستخدم نشط ✅</div>
   </div>
-  <div id="ton-connect">
-    <button type="button" id="w-btn" class="btn-sm" onclick="connectWallet()">Connect Wallet 💳</button>
-  </div>
+  <button type="button" id="w-btn" class="btn-sm" onclick="connectWallet()">ربط المحفظة 💳</button>
 </div>
 
 <div id="p-mine" class="card active">
   <div id="s-badge" class="badge">الحساب غير موثق ⚠️</div>
   <div style="font-size:12px;color:#94a3b8;">إجمالي رصيدك القابل للسحب</div>
   <div class="bal"><span id="bal-txt">0.000000</span> <span style="color:#38bdf8;font-size:18px;">TON</span></div>
-
-<div class="miner-box">
+  <div class="miner-box">
     <div class="miner-top">
       <span>السرعة: <strong id="spd-txt" style="color:#34d399;">0.020 TON / يوم</strong></span>
       <span id="m-state" style="color:#fbbf24;font-weight:bold;">متوقف ⏸️</span>
@@ -81,14 +90,14 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
       <div style="font-size:13px;font-weight:bold;">اشترك في قناة توصيات بيناري أوبشن 📈</div>
       <div style="font-size:12px;color:#34d399;">+0.003 TON</div>
     </div>
-    <a href="https://t.me" target="_blank" id="t1" class="btn-sm" onclick="doT('join_forexgood45',0.003,this)">ابدأ</a>
+    <a href="https://t.me" target="_blank" id="t1" class="btn-sm" onclick="doT('join_forexgood45',0.003)">ابدأ</a>
   </div>
   <div class="task-item">
     <div>
       <div style="font-size:13px;font-weight:bold;">شارك التطبيق مع صديق</div>
       <div style="font-size:12px;color:#34d399;">+0.02 TON</div>
     </div>
-    <a href="https://t.me" target="_blank" id="t2" class="btn-sm" onclick="doT('share_story',0.02,this)">ابدأ</a>
+    <a href="https://t.me" target="_blank" id="t2" class="btn-sm" onclick="doT('share_story',0.02)">ابدأ</a>
   </div>
 </div>
 
@@ -107,7 +116,8 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
   <h3 style="color:#38bdf8;margin-bottom:10px;">سحب الأرباح 💸</h3>
   <div style="background:#090d16;padding:12px;border-radius:14px;margin-bottom:12px;text-align:right;font-size:12px;line-height:1.8;">
     <div>💰 الرصيد المتاح: <strong id="w-bal" style="color:#38bdf8;">0.000000 TON</strong></div>
-    <div>🎯 الحد الأدنى: <strong id="w-min" style="color:#34d399;">0.20 TON (لأول مرة)</strong></div>
+
+<div>🎯 الحد الأدنى: <strong id="w-min" style="color:#34d399;">0.20 TON (لأول مرة)</strong></div>
     <div id="w-req">👥 الشرط: <strong id="w-refs" style="color:#fbbf24;">دعوة 10 أصدقاء (0 / 10)</strong></div>
   </div>
   <input type="text" id="w-addr" class="inp" placeholder="عنوان محفظة TON (يبدأ بـ UQ أو EQ)">
@@ -123,21 +133,18 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
 </div>
 
 <script>
-// الإعدادات الأساسية (استبدل SB_URL برابط مشروعك الحقيقي في Supabase)
-var SB_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-var SB_KEY = 'sb_publishable_LeqAYFFbNWS7oKgtlmWaUg_2xkbtBpl';
 var WALLET = 'UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO';
 var BOT = 'https://t.me';
+var toastTimer = null;
 
-// دالة إظهار الإشعارات
 function toast(m) {
   var el = document.getElementById('toast');
   el.innerText = m;
   el.style.display = 'block';
-  setTimeout(function() { el.style.display = 'none'; }, 3500);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { el.style.display = 'none'; }, 3000);
 }
 
-// التنقل بين التبويبات
 function go(tab) {
   var tabs = ['mine', 'tasks', 'friends', 'withdraw'];
   for (var i = 0; i < tabs.length; i++) {
@@ -148,33 +155,12 @@ function go(tab) {
   document.getElementById('n-' + tab).classList.add('active');
 }
 
-// بيانات المستخدم الافتراضية واستخراجها من تيليجرام
 var user = { id: 123456789, username: 'مستخدم_نشط' };
-var refParam = null;
-
 try {
   if (window.Telegram && window.Telegram.WebApp) {
     window.Telegram.WebApp.ready();
     window.Telegram.WebApp.expand();
     if (window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
       user = window.Telegram.WebApp.initDataUnsafe.user;
-      refParam = window.Telegram.WebApp.initDataUnsafe.start_param;
-    }
-  } else {
-    var h = new URLSearchParams(location.hash.slice(1)).get('tgWebAppData');
-    if (h) {
-      var p = new URLSearchParams(h);
-      if (p.get('user')) {
-        user = JSON.parse(p.get('user'));
-      }
-      refParam = p.get('start_param');
     }
   }
-  // تم إصلاح الخطأ البرمجي هنا بإضافة علامات ||
-  var displayName = user.username ? '@' + user.username : (user.first_name || user.id);
-  document.getElementById('u-name').innerText = displayName;
-} catch (e) {
-  console.error('Telegram WebApp Data Error:', e);
-}
-
-// تحديث روابط الإحالة والمشاركة
