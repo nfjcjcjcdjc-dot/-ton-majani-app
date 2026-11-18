@@ -1,166 +1,160 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>تون مجاني</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Free TON Miner</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif;-webkit-tap-highlight-color:transparent}
-body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
-.status-bar{background:#ef4444;color:#fff;text-align:center;font-size:11px;font-weight:bold;padding:4px;border-radius:8px;margin-bottom:10px}
-.status-bar.ready{background:#059669}
-.header{display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px 15px;border-radius:16px;border:1px solid #38bdf844}
-.card{background:#111827;border:1px solid #38bdf844;border-radius:20px;padding:18px 15px;text-align:center;margin-top:14px;display:none}
-.card.active{display:block}
-.badge{display:inline-block;padding:5px 12px;border-radius:15px;font-size:12px;font-weight:bold;margin-bottom:10px;background:#f59e0b22;color:#fbbf24;border:1px solid #f59e0b66}
-.badge.ok{background:#10b98122;color:#34d399;border-color:#10b98166}
+*{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif}
+body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 90px}
+.st{background:#dc2626;color:#fff;text-align:center;font-size:12px;font-weight:bold;padding:6px;border-radius:8px;margin-bottom:10px}
+.st.ok{background:#059669}
+.hd{display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px 15px;border-radius:16px;border:1px solid #38bdf844}
+.cd{background:#111827;border:1px solid #38bdf844;border-radius:20px;padding:18px 15px;text-align:center;margin-top:14px;display:none}
+.cd.act{display:block}
+.bdg{display:inline-block;padding:5px 12px;border-radius:15px;font-size:12px;font-weight:bold;margin-bottom:10px;background:#f59e0b22;color:#fbbf24;border:1px solid #f59e0b66}
+.bdg.ok{background:#10b98122;color:#34d399;border-color:#10b98166}
 .bal{font-size:30px;font-weight:bold;margin:6px 0 14px}
-.miner-box{background:#090d16;border:1px solid #ffffff15;border-radius:16px;padding:14px;margin-bottom:14px}
-.miner-top{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-bottom:8px}
-.unclaimed{font-size:26px;font-weight:bold;font-family:monospace;color:#7dd3fc}
+.mbx{background:#090d16;border:1px solid #ffffff15;border-radius:16px;padding:14px;margin-bottom:14px}
+.mtp{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-bottom:8px}
+.unc{font-size:26px;font-weight:bold;font-family:monospace;color:#7dd3fc}
 .btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:14px;font-weight:bold;color:#fff;cursor:pointer;text-decoration:none;text-align:center}
-.btn:active{opacity:0.75}
-.btn-blue{background:#0284c7}
-.btn-green{background:#059669}
-.btn-orange{background:#d97706;margin-top:8px}
-.btn-sm{display:inline-block;padding:8px 14px;font-size:12px;border-radius:8px;background:#0284c7;color:#fff;text-decoration:none;font-weight:bold;border:none;cursor:pointer}
-.btn-done{background:#334155;color:#94a3b8;pointer-events:none}
-.boost-box{background:#d9770618;border:1px solid #f59e0b55;border-radius:16px;padding:14px;margin-top:14px;text-align:right}
-.task-item{display:flex;justify-content:space-between;align-items:center;background:#090d16;border:1px solid #ffffff15;padding:12px;border-radius:14px;margin-bottom:10px;text-align:right}
-.inp{width:100%;padding:12px;border-radius:10px;background:#090d16;border:1px solid #38bdf855;color:#fff;font-size:14px;margin-bottom:10px;text-align:right}
-.ref-box{background:#090d16;padding:12px;border-radius:10px;font-size:12px;color:#7dd3fc;word-break:break-all;margin:10px 0;border:1px dashed #38bdf866}
-.bottom-nav{position:fixed;bottom:10px;left:12px;right:12px;background:#0f172a;border:1px solid #38bdf855;border-radius:18px;display:flex;padding:10px 4px;z-index:9999}
-.nav-btn{flex:1;background:none;border:none;color:#64748b;font-size:11px;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
-.nav-btn.active{color:#38bdf8}
-.hidden{display:none!important}
-#toast{position:fixed;top:15px;left:15px;right:15px;background:#0284c7;color:#fff;padding:12px;border-radius:12px;font-size:13px;font-weight:bold;text-align:center;z-index:99999;display:none}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:16px;z-index:10000}
-.modal-box{background:#1e293b;border:1px solid #38bdf866;border-radius:18px;padding:18px;width:100%;max-width:360px;text-align:center}
+.b1{background:#0284c7}.b2{background:#059669}.b3{background:#d97706;margin-top:8px}
+.bsm{display:inline-block;padding:8px 14px;font-size:12px;border-radius:8px;background:#0284c7;color:#fff;text-decoration:none;font-weight:bold;border:none;cursor:pointer}
+.dn{background:#334155;color:#94a3b8;pointer-events:none}
+.bst{background:#d9770618;border:1px solid #f59e0b55;border-radius:16px;padding:14px;margin-top:14px;text-align:left}
+.tsk{display:flex;justify-content:space-between;align-items:center;background:#090d16;border:1px solid #ffffff15;padding:12px;border-radius:14px;margin-bottom:10px;text-align:left}
+.inp{width:100%;padding:12px;border-radius:10px;background:#090d16;border:1px solid #38bdf855;color:#fff;font-size:14px;margin-bottom:10px;text-align:left}
+.rbx{background:#090d16;padding:12px;border-radius:10px;font-size:12px;color:#7dd3fc;word-break:break-all;margin:10px 0;border:1px dashed #38bdf866}
+.nav{position:fixed;bottom:10px;left:12px;right:12px;background:#0f172a;border:1px solid #38bdf855;border-radius:18px;display:flex;padding:10px 4px;z-index:999}
+.nb{flex:1;background:none;border:none;color:#64748b;font-size:11px;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.nb.act{color:#38bdf8}
+.hid{display:none!important}
+#tst{position:fixed;top:15px;left:15px;right:15px;background:#0284c7;color:#fff;padding:12px;border-radius:12px;font-size:13px;font-weight:bold;text-align:center;z-index:9999;display:none}
+.mdl{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:16px;z-index:1000}
+.mb{background:#1e293b;border:1px solid #38bdf866;border-radius:18px;padding:18px;width:100%;max-width:360px;text-align:center}
 </style>
 </head>
 <body>
+<div id="st" class="st">System Stopped (JS Blocked)</div>
+<div id="tst"></div>
 
-<div id="sys-status" class="status-bar">⚠️ جاري تشغيل النظام (إذا بقيت حمراء فالمتصفح يمنع الأكواد)</div>
-<div id="toast"></div>
-
-<div id="pay-modal" class="modal">
-  <div class="modal-box">
-    <h3 id="m-title" style="color:#38bdf8;margin-bottom:8px;">تأكيد الدفع عبر TON</h3>
-    <p id="m-desc" style="font-size:13px;color:#cbd5e1;margin-bottom:10px;"></p>
-    <div class="ref-box" style="font-size:11px;">UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO</div>
-    <button type="button" id="m-open-wallet" class="btn btn-blue" style="margin-bottom:8px;">فتح محفظة Tonkeeper للدفع 💎</button>
-    <button type="button" id="m-confirm" class="btn btn-green" style="margin-bottom:8px;">تأكيد إتمام التحويل ✅</button>
-    <button type="button" id="m-close" class="btn" style="background:#334155;">إلغاء</button>
+<div id="pmd" class="mdl">
+  <div class="mb">
+    <h3 id="mt" style="color:#38bdf8;margin-bottom:8px">Confirm TON Payment</h3>
+    <p id="md" style="font-size:13px;color:#cbd5e1;margin-bottom:10px"></p>
+    <div class="rbx" style="font-size:11px">UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO</div>
+    <button type="button" id="mop" class="btn b1" style="margin-bottom:8px">Open Tonkeeper Wallet</button>
+    <button type="button" id="mcf" class="btn b2" style="margin-bottom:8px">Confirm Transfer</button>
+    <button type="button" id="mcl" class="btn" style="background:#334155">Cancel</button>
   </div>
 </div>
 
-<div id="wallet-modal" class="modal">
-  <div class="modal-box">
-    <h3 style="color:#38bdf8;margin-bottom:8px;">ربط محفظة TON 💳</h3>
-    <p style="font-size:12px;color:#cbd5e1;margin-bottom:12px;">أدخل عنوان محفظتك (Tonkeeper أو محفظة تيليجرام):</p>
-    <input type="text" id="inp-wallet-addr" class="inp" placeholder="UQ... أو EQ...">
-    <button type="button" id="save-wallet-btn" class="btn btn-green" style="margin-bottom:8px;">حفظ المحفظة ✅</button>
-    <button type="button" id="close-wallet-btn" class="btn" style="background:#334155;">إغلاق</button>
+<div id="wmd" class="mdl">
+  <div class="mb">
+    <h3 style="color:#38bdf8;margin-bottom:8px">Connect TON Wallet</h3>
+    <input type="text" id="iwa" class="inp" placeholder="Enter UQ... or EQ... address">
+    <button type="button" id="svw" class="btn b2" style="margin-bottom:8px">Save Wallet</button>
+    <button type="button" id="clw" class="btn" style="background:#334155">Close</button>
   </div>
 </div>
 
-<div class="header">
+<div class="hd">
   <div>
-    <div style="font-size:17px;font-weight:bold;color:#38bdf8;">تون مجاني 💎</div>
-    <div id="u-name" style="font-size:12px;color:#94a3b8;">مستخدم نشط ✅</div>
+    <div style="font-size:17px;font-weight:bold;color:#38bdf8">Free TON Miner</div>
+    <div id="unm" style="font-size:12px;color:#94a3b8">Active User</div>
   </div>
-  <button type="button" id="w-btn" class="btn-sm">ربط المحفظة 💳</button>
+  <button type="button" id="wbt" class="bsm">Connect Wallet</button>
 </div>
 
-<div id="p-mine" class="card active">
-  <div id="s-badge" class="badge">الحساب غير موثق ⚠️</div>
-  <div style="font-size:12px;color:#94a3b8;">إجمالي رصيدك القابل للسحب</div>
-  <div class="bal"><span id="bal-txt">0.000000</span> <span style="color:#38bdf8;font-size:18px;">TON</span></div>
-  <div class="miner-box">
-    <div class="miner-top">
-      <span>السرعة: <strong id="spd-txt" style="color:#34d399;">0.020 TON / يوم</strong></span>
-      <span id="m-state" style="color:#fbbf24;font-weight:bold;">متوقف ⏸️</span>
+<div id="p1" class="cd act">
+  <div id="sbg" class="bdg">Account Unverified</div>
+  <div style="font-size:12px;color:#94a3b8">Total Withdrawable Balance</div>
+  <div class="bal"><span id="blt">0.000000</span> <span style="color:#38bdf8;font-size:18px">TON</span></div>
+  <div class="mbx">
+    <div class="mtp">
+      <span>Speed: <strong id="spt" style="color:#34d399">0.020 TON / day</strong></span>
+      <span id="mst" style="color:#fbbf24;font-weight:bold">Paused</span>
     </div>
-    <div id="unc-txt" class="unclaimed">0.000000</div>
-    <div style="font-size:11px;color:#64748b;">الأرباح المُعدّنة حالياً</div>
+    <div id="uct" class="unc">0.000000</div>
+    <div style="font-size:11px;color:#64748b">Currently Mined Profits</div>
   </div>
-  <button type="button" id="btn-verify" class="btn btn-blue">توثيق الحساب وتفعيل التعدين (0.05 TON) ⚡</button>
-  <button type="button" id="btn-claim" class="btn btn-green hidden">جمع الأرباح إلى الرصيد (Claim) 💰</button>
-  <div class="boost-box">
-    <div style="font-size:14px;font-weight:bold;color:#fbbf24;margin-bottom:4px;">🚀 تسريع التعدين (+7% لكل 1 TON)</div>
-    <div style="font-size:12px;color:#cbd5e1;margin-bottom:10px;">ضاعف أرباحك اليومية بإيداع 1 TON أو أكثر لزيادة السرعة 7% عن كل عملة.</div>
-    <input type="number" id="inp-boost" class="inp" min="1" step="0.5" value="1" placeholder="الحد الأدنى 1 TON">
-    <button type="button" id="btn-boost" class="btn btn-orange">تسريع التعدين الآن (+7%) 🔥</button>
+  <button type="button" id="bv" class="btn b1">Verify Account & Start Mining (0.05 TON)</button>
+  <button type="button" id="bc" class="btn b2 hid">Claim Profits to Balance</button>
+  <div class="bst">
+    <div style="font-size:14px;font-weight:bold;color:#fbbf24;margin-bottom:4px">Boost Mining (+7% per 1 TON)</div>
+    <div style="font-size:12px;color:#cbd5e1;margin-bottom:10px">Deposit 1 TON or more to increase daily mining speed by 7% per coin.</div>
+    <input type="number" id="ibs" class="inp" min="1" step="0.5" value="1">
+    <button type="button" id="bb" class="btn b3">Boost Mining Now (+7%)</button>
   </div>
 </div>
 
-<div id="p-tasks" class="card">
-  <h3 style="color:#38bdf8;margin-bottom:12px;">المهام اليومية 📋</h3>
-  <div class="task-item">
+<div id="p2" class="cd">
+  <h3 style="color:#38bdf8;margin-bottom:12px">Daily Tasks</h3>
+  <div class="tsk">
     <div>
-      <div style="font-size:13px;font-weight:bold;">اشترك في قناة توصيات بيناري أوبشن 📈</div>
-      <div style="font-size:12px;color:#34d399;">+0.003 TON</div>
+      <div style="font-size:13px;font-weight:bold">Join Binary Options Channel</div>
+      <div style="font-size:12px;color:#34d399">+0.003 TON</div>
     </div>
-    <a href="https://t.me" target="_blank" id="t1" class="btn-sm">ابدأ</a>
+    <a href="https://t.me" target="_blank" id="t1" class="bsm">Start</a>
   </div>
-  <div class="task-item">
+  <div class="tsk">
     <div>
-      <div style="font-size:13px;font-weight:bold;">شارك التطبيق مع صديق</div>
-      <div style="font-size:12px;color:#34d399;">+0.02 TON</div>
+      <div style="font-size:13px;font-weight:bold">Share App with a Friend</div>
+      <div style="font-size:12px;color:#34d399">+0.02 TON</div>
     </div>
-    <a href="https://t.me" target="_blank" id="t2" class="btn-sm">ابدأ</a>
+    <a href="https://t.me" target="_blank" id="t2" class="bsm">Start</a>
   </div>
 </div>
 
-<div id="p-friends" class="card">
-  <h3 style="color:#38bdf8;margin-bottom:8px;">دعوة الأصدقاء 👥</h3>
-  <p style="font-size:12px;color:#94a3b8;margin-bottom:12px;">احصل على +0.1 TON/يوم سرعة إضافية عن كل صديق يوثق حسابه!</p>
-  <div style="background:#090d16;padding:12px;border-radius:14px;margin-bottom:12px;">
-    <div style="font-size:12px;color:#94a3b8;">أصدقاؤك الموثقون</div>
-    <div id="ref-txt" style="font-size:26px;font-weight:bold;margin-top:4px;">0</div>
+<div id="p3" class="cd">
+  <h3 style="color:#38bdf8;margin-bottom:8px">Invite Friends</h3>
+  <p style="font-size:12px;color:#94a3b8;margin-bottom:12px">Get +0.1 TON/day extra mining speed for each friend who verifies their account!</p>
+  <div style="background:#090d16;padding:12px;border-radius:14px;margin-bottom:12px">
+    <div style="font-size:12px;color:#94a3b8">Verified Friends</div>
+    <div id="rft" style="font-size:26px;font-weight:bold;margin-top:4px">0</div>
   </div>
-  <div id="ref-url" class="ref-box">https://t.me</div>
-  <button type="button" id="btn-copy-ref" class="btn btn-blue">نسخ رابط الدعوة ومشاركته 📤</button>
+  <div id="rfu" class="rbx">https://t.me</div>
+  <button type="button" id="bcr" class="btn b1">Copy & Share Invite Link</button>
 </div>
 
-<div id="p-withdraw" class="card">
-  <h3 style="color:#38bdf8;margin-bottom:10px;">سحب الأرباح 💸</h3>
-  <div style="background:#090d16;padding:12px;border-radius:14px;margin-bottom:12px;text-align:right;font-size:12px;line-height:1.8;">
-    <div>💰 الرصيد المتاح: <strong id="w-bal" style="color:#38bdf8;">0.000000 TON</strong></div>
-    <div>🎯 الحد الأدنى: <strong id="w-min" style="color:#34d399;">0.20 TON (لأول مرة)</strong></div>
-    <div id="w-req">👥 الشرط: <strong id="w-refs" style="color:#fbbf24;">دعوة 10 أصدقاء (0 / 10)</strong></div>
+<div id="p4" class="cd">
+  <h3 style="color:#38bdf8;margin-bottom:10px">Withdraw Profits</h3>
+  <div style="background:#090d16;padding:12px;border-radius:14px;margin-bottom:12px;text-align:left;font-size:12px;line-height:1.8">
+    <div>Available Balance: <strong id="wbl" style="color:#38bdf8">0.000000 TON</strong></div>
+    <div>Minimum Withdraw: <strong id="wmn" style="color:#34d399">0.20 TON (First time)</strong></div>
+    <div id="wrq">Requirement: <strong id="wrf" style="color:#fbbf24">Invite 10 friends (0 / 10)</strong></div>
   </div>
-  <input type="text" id="w-addr" class="inp" placeholder="عنوان محفظة TON (يبدأ بـ UQ أو EQ)">
-  <input type="number" id="w-amt" class="inp" step="0.01" placeholder="المبلغ المراد سحبه (مثلاً 0.2)">
-  <button type="button" id="btn-withdraw" class="btn btn-green">تأكيد طلب السحب 🚀</button>
+  <input type="text" id="wad" class="inp" placeholder="TON Wallet Address (UQ or EQ)">
+  <input type="number" id="wam" class="inp" step="0.01" placeholder="Amount to withdraw">
+  <button type="button" id="bwd" class="btn b2">Confirm Withdrawal</button>
 </div>
 
-<div class="bottom-nav">
-  <button type="button" id="n-mine" class="nav-btn active"><span>⛏️</span><span>التعدين</span></button>
-  <button type="button" id="n-tasks" class="nav-btn"><span>📋</span><span>المهام</span></button>
-  <button type="button" id="n-friends" class="nav-btn"><span>👥</span><span>الأصدقاء</span></button>
-  <button type="button" id="n-withdraw" class="nav-btn"><span>💸</span><span>السحب</span></button>
+<div class="nav">
+  <button type="button" id="n1" class="nb act"><span>⛏️</span><span>Mine</span></button>
+  <button type="button" id="n2" class="nb"><span>📋</span><span>Tasks</span></button>
+  <button type="button" id="n3" class="nb"><span>👥</span><span>Friends</span></button>
+  <button type="button" id="n4" class="nb"><span>💸</span><span>Withdraw</span></button>
 </div>
 
 <script>
-(function() {
-  var st = document.getElementById("sys-status");
-  if (st) {
-    st.innerText = "النظام والأزرار تعمل بنجاح ✅";
-    st.className = "status-bar ready";
-  }
+var g=function(i){return document.getElementById(i)};
+g("st").innerText="System & Buttons Ready 100% ✅";
+g("st").className="st ok";
 
-  var WALLET = "UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO";
-  var BOT = "https://t.me";
-  var toastTimer = null;
+var W="UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO",B="https://t.me",tm=null;
+function msg(t){var e=g("tst");e.innerText=t;e.style.display="block";clearTimeout(tm);tm=setTimeout(function(){e.style.display="none"},3000)}
+function tab(x){for(var i=1;i<=4;i++){g("p"+i).classList.remove("act");g("n"+i).classList.remove("act")}g("p"+x).classList.add("act");g("n"+x).classList.add("act")}
+g("n1").onclick=function(){tab(1)};g("n2").onclick=function(){tab(2)};g("n3").onclick=function(){tab(3)};g("n4").onclick=function(){tab(4)};
 
-  function toast(m) {
-    var el = document.getElementById("toast");
-    el.innerText = m;
-    el.style.display = "block";
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function() { el.style.display = "none"; }, 3000);
-  }
+var u={id:123456,username:"Active_User"};
+try{var h=new URLSearchParams(location.hash.slice(1)).get("tgWebAppData");if(h){var p=new URLSearchParams(h);if(p.get("user"))u=JSON.parse(p.get("user"))}g("unm").innerText=u.username?"@"+u.username:(u.first_name||"Active User")}catch(e){}
+var lk=B+"?startapp="+u.id;g("rfu").innerText=lk;g("t2").href="https://t.me"+encodeURIComponent(lk);
 
-  function go(tab) {
-    var tabs = ["mine", "tasks", "friends", "withdraw"];
+var uc=0,sv=null;try{sv=localStorage.getItem("tn_en_"+u.id)}catch(e){}
+var d=sv?JSON.parse(sv):{b:0,s:0.02,r:0,t:[],v:false,w:false,a:""};
+function sav(){try{localStorage.setItem("tn_en_"+u.id,JSON.stringify(d))}catch(e){}}
+
+function ui(){
+  g("blt").innerText=Number(d.b).toFixed(6);g("wbl").innerText=Number(d.b).toFixed(6)+" TON";
+  g("spt").innerText=Number(d.s).toFixed(3)+" TON / day";g("rft").innerText=d.r;
