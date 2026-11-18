@@ -60,6 +60,7 @@
       position: fixed; bottom: 12px; left: 16px; right: 16px;
       background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(56, 189, 248, 0.25);
       border-radius: 20px; display: flex; justify-content: space-around; padding: 10px 6px;
+      z-index: 999;
     }
     .nav-item { background: none; border: none; color: #64748b; font-size: 12px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; }
     .nav-item.active { color: #38bdf8; }
@@ -73,7 +74,7 @@
     <div class="header">
       <div>
         <div class="app-title">تون مجاني 💎</div>
-        <div id="user-name" class="user-tag">جاري الاتصال...</div>
+        <div id="user-name" class="user-tag">مستخدم نشط ✅</div>
       </div>
       <div id="ton-connect"></div>
     </div>
@@ -116,7 +117,7 @@
         <div id="ref-count" style="font-size:28px; font-weight:900; color:#fff; margin-top:4px;">0</div>
       </div>
       <div style="font-size:12px; color:#94a3b8; text-align:right;">رابط الدعوة الخاص بك:</div>
-      <div id="ref-link" class="ref-box">جاري توليد الرابط...</div>
+      <div id="ref-link" class="ref-box">https://t.me</div>
       <button class="btn btn-verify" onclick="copyRefLink()">نسخ رابط الدعوة ومشاركته 📤</button>
     </div>
   </div>
@@ -133,24 +134,12 @@
     </button>
   </div>
 
-  <script src="https://telegram.org" async></script>
-  <script src="https://unpkg.com" async></script>
-  <script src="https://unpkg.com" async></script>
-
+  <!-- كود التشغيل الفوري للأزرار والواجهة بدون انتظار أي خادم -->
   <script>
     const SUPABASE_URL = 'https://supabase.co';
     const SUPABASE_KEY = 'sb_publishable_LeqAYFFbNWS7oKgtlmWaUg_2xkbtBpl';
     const MY_WALLET = 'UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO';
     const BOT_LINK = 'https://t.me';
-
-    // ملف تعريف المحفظة مدمج تلقائياً ليعمل بدون ملفات إضافية
-    const manifestObj = {
-      url: BOT_LINK,
-      name: "Ton Majani",
-      iconUrl: "https://ton.org"
-    };
-    const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
-    const autoManifestUrl = URL.createObjectURL(manifestBlob);
 
     const TASKS = [
       { id: 'join_channel', title: 'اشترك في قناة التطبيق الرسمية', reward: 0.05, url: 'https://t.me' },
@@ -158,16 +147,31 @@
       { id: 'share_story', title: 'شارك التطبيق مع صديق', reward: 0.02, url: 'https://t.me' + BOT_LINK }
     ];
 
-    let tg = null;
     let tgUser = { id: 123456789, username: 'مستخدم_تجريبي' };
-    let startParam = new URLSearchParams(window.location.search).get('tgWebAppStartParam');
+    let startParam = null;
     let myRefLink = `${BOT_LINK}?startapp=${tgUser.id}`;
-    document.getElementById('ref-link').innerText = myRefLink;
-
     let db = null;
-    let userData = null;
+    let userData = { balance: 0, mining_speed: 0.5, referrals_count: 0, completed_tasks: [], is_verified: false };
     let connectedWallet = null;
     let tonConnectUI = null;
+
+    // استخراج بيانات المستخدم من رابط تيليجرام مباشرة بدون الحاجة لملف خارجي
+    try {
+      const hashParams = new URLSearchParams(window.location.hash.slice(1));
+      const tgWebAppData = hashParams.get('tgWebAppData');
+      if (tgWebAppData) {
+        const initParams = new URLSearchParams(tgWebAppData);
+        const userStr = initParams.get('user');
+        if (userStr) {
+          tgUser = JSON.parse(userStr);
+          document.getElementById('user-name').innerText = '@' + (tgUser.username || tgUser.first_name || tgUser.id);
+          myRefLink = `${BOT_LINK}?startapp=${tgUser.id}`;
+        }
+        startParam = initParams.get('start_param');
+      }
+    } catch (e) {}
+
+    document.getElementById('ref-link').innerText = myRefLink;
 
     function switchTab(tabName, el) {
       document.getElementById('tab-mine').classList.add('hidden');
@@ -178,22 +182,16 @@
       el.classList.add('active');
     }
 
-    const initInterval = setInterval(() => {
-      if (window.Telegram?.WebApp && !tg) {
-        tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        if (tg.initDataUnsafe?.user) {
-          tgUser = tg.initDataUnsafe.user;
-          document.getElementById('user-name').innerText = '@' + (tgUser.username || tgUser.first_name || tgUser.id);
-          myRefLink = `${BOT_LINK}?startapp=${tgUser.id}`;
-          document.getElementById('ref-link').innerText = myRefLink;
-        }
-        if (tg.initDataUnsafe?.start_param) startParam = tg.initDataUnsafe.start_param;
-      }
-
-      if (window.supabase && !db) {
-        db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        loadUser();
-      }
-
+    function renderTasks() {
+      const list = document.getElementById('tasks-list');
+      const doneList = userData?.completed_tasks || [];
+      list.innerHTML = '';
+      TASKS.forEach(task => {
+        const isDone = doneList.includes(task.id);
+        const div = document.createElement('div');
+        div.className = 'task-item';
+        div.innerHTML = `
+          <div>
+            <div class="task-title">${task.title}</div>
+            <div class="task-reward">+${task.reward} TON</div>
+          </div>
