@@ -4,258 +4,196 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>تون مجاني - Ton Majani</title>
-  <script src="https://telegram.org"></script>
-  <script src="https://jsdelivr.net"></script>
-  <script src="https://jsdelivr.net"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body {
-      background: radial-gradient(circle at top, #1e293b 0%, #090d16 100%);
+      background: #090d16;
+      background-image: radial-gradient(circle at top, #1e293b 0%, #090d16 100%);
       color: #ffffff;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 16px;
+      padding: 16px 16px 85px 16px;
       user-select: none;
     }
     .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(30, 41, 59, 0.7);
-      backdrop-filter: blur(10px);
-      padding: 12px 16px;
-      border-radius: 18px;
-      border: 1px solid rgba(56, 189, 248, 0.2);
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(30, 41, 59, 0.85); padding: 12px 16px;
+      border-radius: 18px; border: 1px solid rgba(56, 189, 248, 0.25);
     }
     .app-title { font-size: 18px; font-weight: 800; color: #38bdf8; }
     .user-tag { font-size: 12px; color: #94a3b8; margin-top: 2px; }
-    .main-card {
-      background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 26px;
-      padding: 24px 20px;
-      text-align: center;
-      box-shadow: 0 10px 35px rgba(0, 136, 204, 0.2);
-      margin: 16px 0;
+    .card {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 24px;
+      padding: 22px 18px; text-align: center;
+      box-shadow: 0 10px 35px rgba(0, 136, 204, 0.15); margin-top: 16px;
     }
-    .badge {
-      display: inline-block;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: 16px;
-    }
+    .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
     .badge-unverified { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
     .badge-verified { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
     .balance-label { font-size: 13px; color: #94a3b8; }
-    .balance-value { font-size: 36px; font-weight: 900; margin: 6px 0 20px; letter-spacing: -0.5px; }
-    .balance-value span { color: #38bdf8; font-size: 20px; }
-    .miner-box {
-      background: rgba(9, 13, 22, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 20px;
-    }
-    .miner-top { display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; margin-bottom: 10px; }
+    .balance-value { font-size: 34px; font-weight: 900; margin: 6px 0 18px; }
+    .balance-value span { color: #38bdf8; font-size: 18px; }
+    .miner-box { background: rgba(9, 13, 22, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px; padding: 15px; margin-bottom: 18px; }
+    .miner-top { display: flex; justify-content: space-between; font-size: 12px; color: #94a3b8; margin-bottom: 8px; }
     .speed-val { color: #34d399; font-weight: 700; }
     .state-off { color: #fbbf24; font-weight: 700; }
     .state-on { color: #34d399; font-weight: 700; }
-    .unclaimed-val { font-size: 28px; font-weight: 800; font-family: monospace; color: #7dd3fc; margin: 6px 0; }
-    .unclaimed-sub { font-size: 11px; color: #64748b; }
-    .btn {
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 16px;
-      font-size: 15px;
-      font-weight: 800;
-      color: #ffffff;
-      cursor: pointer;
-      transition: transform 0.15s;
-    }
+    .unclaimed-val { font-size: 26px; font-weight: 800; font-family: monospace; color: #7dd3fc; margin: 4px 0; }
+    .btn { width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 14px; font-weight: 800; color: #fff; cursor: pointer; }
     .btn:active { transform: scale(0.97); }
-    .btn-verify { background: linear-gradient(90deg, #0284c7, #2563eb); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4); }
-    .btn-claim { background: linear-gradient(90deg, #059669, #0d9488); box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4); }
-    .hidden { display: none; }
-    .footer-note { text-align: center; font-size: 11px; color: #64748b; line-height: 1.6; padding: 0 10px; }
+    .btn-verify { background: linear-gradient(90deg, #0284c7, #2563eb); }
+    .btn-claim { background: linear-gradient(90deg, #059669, #0d9488); }
+    .btn-small { padding: 8px 14px; font-size: 12px; border-radius: 10px; width: auto; background: #0284c7; }
+    .btn-done { background: #1e293b; color: #64748b; }
+    .task-item {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(9, 13, 22, 0.65); border: 1px solid rgba(255,255,255,0.08);
+      padding: 14px; border-radius: 16px; margin-bottom: 10px; text-align: right;
+    }
+    .task-title { font-size: 14px; font-weight: 700; color: #f8fafc; }
+    .task-reward { font-size: 12px; color: #34d399; margin-top: 3px; font-weight: 600; }
+    .ref-box { background: rgba(9, 13, 22, 0.75); padding: 12px; border-radius: 12px; font-size: 11px; color: #7dd3fc; word-break: break-all; margin: 12px 0; border: 1px dashed rgba(56, 189, 248, 0.4); }
+    .bottom-nav {
+      position: fixed; bottom: 12px; left: 16px; right: 16px;
+      background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 20px; display: flex; justify-content: space-around; padding: 10px 6px;
+    }
+    .nav-item { background: none; border: none; color: #64748b; font-size: 12px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; }
+    .nav-item.active { color: #38bdf8; }
+    .nav-icon { font-size: 20px; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div>
-      <div class="app-title">تون مجاني 💎</div>
-      <div id="user-name" class="user-tag">جاري الاتصال...</div>
-    </div>
-    <div id="ton-connect"></div>
-  </div>
-
-  <div class="main-card">
-    <div id="status-badge" class="badge badge-unverified">الحساب غير موثق ⚠️</div>
-    
-    <div class="balance-label">إجمالي رصيدك القابل للسحب</div>
-    <div class="balance-value"><span id="balance-display" style="color:#fff;font-size:36px;">0.000000</span> <span>TON</span></div>
-
-    <div class="miner-box">
-      <div class="miner-top">
-        <span>السرعة: <span class="speed-val">0.5 TON / يوم</span></span>
-        <span id="mining-state" class="state-off">متوقف ⏸️</span>
+  <div>
+    <div class="header">
+      <div>
+        <div class="app-title">تون مجاني 💎</div>
+        <div id="user-name" class="user-tag">جاري الاتصال...</div>
       </div>
-      <div id="unclaimed-display" class="unclaimed-val">0.000000</div>
-      <div class="unclaimed-sub">الأرباح المُعدّنة حالياً</div>
+      <div id="ton-connect"></div>
     </div>
 
-    <button id="verify-btn" class="btn btn-verify" onclick="verifyAccount()">
-      توثيق الحساب وتفعيل التعدين (0.05 TON) ⚡
-    </button>
+    <div id="tab-mine" class="card">
+      <div id="status-badge" class="badge badge-unverified">الحساب غير موثق ⚠️</div>
+      <div class="balance-label">إجمالي رصيدك القابل للسحب</div>
+      <div class="balance-value"><span id="balance-display" style="color:#fff;font-size:34px;">0.000000</span> <span>TON</span></div>
 
-    <button id="claim-btn" class="btn btn-claim hidden" onclick="claimProfit()">
-      جمع الأرباح إلى الرصيد (Claim) 💰
+      <div class="miner-box">
+        <div class="miner-top">
+          <span>السرعة: <span id="speed-display" class="speed-val">0.5 TON / يوم</span></span>
+          <span id="mining-state" class="state-off">متوقف ⏸️</span>
+        </div>
+        <div id="unclaimed-display" class="unclaimed-val">0.000000</div>
+        <div style="font-size:11px; color:#64748b;">الأرباح المُعدّنة حالياً</div>
+      </div>
+
+      <button id="verify-btn" class="btn btn-verify" onclick="verifyAccount()">
+        توثيق الحساب وتفعيل التعدين (0.05 TON) ⚡
+      </button>
+      <button id="claim-btn" class="btn btn-claim hidden" onclick="claimProfit()">
+        جمع الأرباح إلى الرصيد (Claim) 💰
+      </button>
+    </div>
+
+    <div id="tab-tasks" class="card hidden">
+      <h2 style="font-size:18px; color:#38bdf8; margin-bottom:6px;">المهام اليومية 📋</h2>
+      <p style="font-size:12px; color:#94a3b8; margin-bottom:16px;">أكمل المهام التالية لزيادة رصيدك مجاناً</p>
+      <div id="tasks-list"></div>
+    </div>
+
+    <div id="tab-friends" class="card hidden">
+      <h2 style="font-size:18px; color:#38bdf8; margin-bottom:6px;">دعوة الأصدقاء 👥</h2>
+      <p style="font-size:12px; color:#94a3b8; margin-bottom:14px;">
+        احصل على <strong style="color:#34d399;">+0.1 TON/يوم</strong> سرعة تعدين إضافية عن كل صديق يوثق حسابه!
+      </p>
+      <div style="background:rgba(9,13,22,0.65); padding:14px; border-radius:16px; margin-bottom:14px;">
+        <div style="font-size:12px; color:#94a3b8;">عدد أصدقائك الموثقين</div>
+        <div id="ref-count" style="font-size:28px; font-weight:900; color:#fff; margin-top:4px;">0</div>
+      </div>
+      <div style="font-size:12px; color:#94a3b8; text-align:right;">رابط الدعوة الخاص بك:</div>
+      <div id="ref-link" class="ref-box">جاري توليد الرابط...</div>
+      <button class="btn btn-verify" onclick="copyRefLink()">نسخ رابط الدعوة ومشاركته 📤</button>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-item active" onclick="switchTab('mine', this)">
+      <span class="nav-icon">⛏️</span><span>التعدين</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('tasks', this)">
+      <span class="nav-icon">📋</span><span>المهام</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('friends', this)">
+      <span class="nav-icon">👥</span><span>الأصدقاء</span>
     </button>
   </div>
 
-  <div class="footer-note">
-    لحماية المنصة من البوتات والحسابات الوهمية، يُطلب توثيق المحفظة لمرة واحدة فقط بقيمة 0.05 TON لتفعيل التعدين السحابي الدائم.
-  </div>
+  <script src="https://telegram.org" async></script>
+  <script src="https://unpkg.com" async></script>
+  <script src="https://unpkg.com" async></script>
 
   <script>
     const SUPABASE_URL = 'https://supabase.co';
     const SUPABASE_KEY = 'sb_publishable_LeqAYFFbNWS7oKgtlmWaUg_2xkbtBpl';
     const MY_WALLET = 'UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO';
+    const BOT_LINK = 'https://t.me';
 
-    const tg = window.Telegram?.WebApp;
-    if (tg) tg.expand();
+    // ملف تعريف المحفظة مدمج تلقائياً ليعمل بدون ملفات إضافية
+    const manifestObj = {
+      url: BOT_LINK,
+      name: "Ton Majani",
+      iconUrl: "https://ton.org"
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+    const autoManifestUrl = URL.createObjectURL(manifestBlob);
 
-    const tgUser = tg?.initDataUnsafe?.user || { id: 123456789, username: 'مستخدم_تجريبي' };
-    document.getElementById('user-name').innerText = '@' + (tgUser.username || tgUser.first_name || tgUser.id);
+    const TASKS = [
+      { id: 'join_channel', title: 'اشترك في قناة التطبيق الرسمية', reward: 0.05, url: 'https://t.me' },
+      { id: 'join_chat', title: 'انضم إلى مجموعة المجتمع', reward: 0.03, url: 'https://t.me' },
+      { id: 'share_story', title: 'شارك التطبيق مع صديق', reward: 0.02, url: 'https://t.me' + BOT_LINK }
+    ];
+
+    let tg = null;
+    let tgUser = { id: 123456789, username: 'مستخدم_تجريبي' };
+    let startParam = new URLSearchParams(window.location.search).get('tgWebAppStartParam');
+    let myRefLink = `${BOT_LINK}?startapp=${tgUser.id}`;
+    document.getElementById('ref-link').innerText = myRefLink;
 
     let db = null;
-    if (window.supabase) {
-      db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
-
     let userData = null;
     let connectedWallet = null;
     let tonConnectUI = null;
 
-    if (window.TON_CONNECT_UI) {
-      tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-        manifestUrl: window.location.origin + '/tonconnect-manifest.json',
-        buttonRootId: 'ton-connect'
-      });
+    function switchTab(tabName, el) {
+      document.getElementById('tab-mine').classList.add('hidden');
+      document.getElementById('tab-tasks').classList.add('hidden');
+      document.getElementById('tab-friends').classList.add('hidden');
+      document.getElementById('tab-' + tabName).classList.remove('hidden');
+      document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+      el.classList.add('active');
+    }
 
-      tonConnectUI.onStatusChange(async (wallet) => {
-        if (wallet) {
-          connectedWallet = wallet.account.address;
-          if (db && userData && !userData.wallet_address) {
-            await db.from('users').update({ wallet_address: connectedWallet }).eq('telegram_id', tgUser.id);
-          }
-        } else {
-          connectedWallet = null;
+    const initInterval = setInterval(() => {
+      if (window.Telegram?.WebApp && !tg) {
+        tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        if (tg.initDataUnsafe?.user) {
+          tgUser = tg.initDataUnsafe.user;
+          document.getElementById('user-name').innerText = '@' + (tgUser.username || tgUser.first_name || tgUser.id);
+          myRefLink = `${BOT_LINK}?startapp=${tgUser.id}`;
+          document.getElementById('ref-link').innerText = myRefLink;
         }
-      });
-    }
-
-    async function loadUser() {
-      if (!db) return;
-      let { data } = await db.from('users').select('*').eq('telegram_id', tgUser.id).single();
-      if (!data) {
-        const newUser = {
-          telegram_id: tgUser.id,
-          username: tgUser.username || 'User',
-          is_verified: false,
-          balance: 0,
-          mining_speed: 0.5,
-          last_claim: new Date().toISOString()
-        };
-        const res = await db.from('users').insert([newUser]).select().single();
-        data = res.data;
-      }
-      userData = data;
-      updateUI();
-    }
-
-    function updateUI() {
-      if (!userData) return;
-      document.getElementById('balance-display').innerText = Number(userData.balance).toFixed(6);
-      if (userData.is_verified) {
-        document.getElementById('status-badge').innerText = 'موثق ونشط ✅';
-        document.getElementById('status-badge').className = 'badge badge-verified';
-        document.getElementById('mining-state').innerText = 'يعمل الآن ⚡';
-        document.getElementById('mining-state').className = 'state-on';
-        document.getElementById('verify-btn').classList.add('hidden');
-        document.getElementById('claim-btn').classList.remove('hidden');
-      }
-    }
-
-    setInterval(() => {
-      if (userData && userData.is_verified) {
-        const lastClaim = new Date(userData.last_claim).getTime();
-        const secondsPassed = Math.max(0, (Date.now() - lastClaim) / 1000);
-        const mined = secondsPassed * (Number(userData.mining_speed) / 86400);
-        document.getElementById('unclaimed-display').innerText = mined.toFixed(6);
-      }
-    }, 1000);
-
-    async function verifyAccount() {
-      if (!tonConnectUI) {
-        alert('جاري تحميل أداة المحفظة، يرجى إعادة تحديث الصفحة من النقاط الثلاث بالأعلى.');
-        return;
-      }
-      if (!connectedWallet) {
-        tonConnectUI.openModal();
-        return;
+        if (tg.initDataUnsafe?.start_param) startParam = tg.initDataUnsafe.start_param;
       }
 
-      const transaction = {
-        validUntil: Math.floor(Date.now() / 1000) + 600,
-        messages: [{ address: MY_WALLET, amount: "50000000" }]
-      };
-
-      try {
-        const result = await tonConnectUI.sendTransaction(transaction);
-        if (result && db) {
-          const nowIso = new Date().toISOString();
-          await db.from('users').update({
-            is_verified: true,
-            wallet_address: connectedWallet,
-            last_claim: nowIso
-          }).eq('telegram_id', tgUser.id);
-
-          userData.is_verified = true;
-          userData.last_claim = nowIso;
-          updateUI();
-          alert('تم توثيق حسابك بنجاح وبدأ التعدين! 🎉');
-        }
-      } catch (e) {
-        alert('تم إلغاء المعاملة أو لم تكتمل.');
+      if (window.supabase && !db) {
+        db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        loadUser();
       }
-    }
 
-    async function claimProfit() {
-      const unclaimed = parseFloat(document.getElementById('unclaimed-display').innerText);
-      if (unclaimed <= 0.000001) {
-        alert('انتظر قليلاً لتجميع أرباح كافية!');
-        return;
-      }
-      const newBalance = Number(userData.balance) + unclaimed;
-      const nowIso = new Date().toISOString();
-
-      if (db) {
-        await db.from('users').update({ balance: newBalance, last_claim: nowIso }).eq('telegram_id', tgUser.id);
-      }
-      userData.balance = newBalance;
-      userData.last_claim = nowIso;
-      document.getElementById('unclaimed-display').innerText = '0.000000';
-      updateUI();
-      alert('تم جمع ' + unclaimed.toFixed(6) + ' TON بنجاح! 💰');
-    }
-
-    loadUser();
-  </script>
-</body>
-</html>
