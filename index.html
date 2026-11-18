@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>تون مجاني</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,-apple-system,sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
+*{box-sizing:border-box;margin:0;padding:0;font-family:sans-serif;-webkit-tap-highlight-color:transparent}
 body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
+.status-bar{background:#ef4444;color:#fff;text-align:center;font-size:11px;font-weight:bold;padding:4px;border-radius:8px;margin-bottom:10px}
+.status-bar.ready{background:#059669}
 .header{display:flex;justify-content:space-between;align-items:center;background:#1e293b;padding:12px 15px;border-radius:16px;border:1px solid #38bdf844}
 .card{background:#111827;border:1px solid #38bdf844;border-radius:20px;padding:18px 15px;text-align:center;margin-top:14px;display:none}
 .card.active{display:block}
@@ -16,44 +18,42 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
 .miner-box{background:#090d16;border:1px solid #ffffff15;border-radius:16px;padding:14px;margin-bottom:14px}
 .miner-top{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-bottom:8px}
 .unclaimed{font-size:26px;font-weight:bold;font-family:monospace;color:#7dd3fc}
-.btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:14px;font-weight:bold;color:#fff;cursor:pointer;text-decoration:none;text-align:center;touch-action:manipulation}
-.btn:active{opacity:0.75;transform:scale(0.98)}
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:14px;font-weight:bold;color:#fff;cursor:pointer;text-decoration:none;text-align:center}
+.btn:active{opacity:0.75}
 .btn-blue{background:#0284c7}
 .btn-green{background:#059669}
 .btn-orange{background:#d97706;margin-top:8px}
-.btn-sm{display:inline-block;padding:8px 14px;font-size:12px;border-radius:8px;background:#0284c7;color:#fff;text-decoration:none;font-weight:bold;border:none;cursor:pointer;touch-action:manipulation}
+.btn-sm{display:inline-block;padding:8px 14px;font-size:12px;border-radius:8px;background:#0284c7;color:#fff;text-decoration:none;font-weight:bold;border:none;cursor:pointer}
 .btn-done{background:#334155;color:#94a3b8;pointer-events:none}
 .boost-box{background:#d9770618;border:1px solid #f59e0b55;border-radius:16px;padding:14px;margin-top:14px;text-align:right}
 .task-item{display:flex;justify-content:space-between;align-items:center;background:#090d16;border:1px solid #ffffff15;padding:12px;border-radius:14px;margin-bottom:10px;text-align:right}
-.inp{width:100%;padding:12px;border-radius:10px;background:#090d16;border:1px solid #38bdf855;color:#fff;font-size:14px;margin-bottom:10px;text-align:right;user-select:text}
-.ref-box{background:#090d16;padding:12px;border-radius:10px;font-size:12px;color:#7dd3fc;word-break:break-all;margin:10px 0;border:1px dashed #38bdf866;user-select:text}
+.inp{width:100%;padding:12px;border-radius:10px;background:#090d16;border:1px solid #38bdf855;color:#fff;font-size:14px;margin-bottom:10px;text-align:right}
+.ref-box{background:#090d16;padding:12px;border-radius:10px;font-size:12px;color:#7dd3fc;word-break:break-all;margin:10px 0;border:1px dashed #38bdf866}
 .bottom-nav{position:fixed;bottom:10px;left:12px;right:12px;background:#0f172a;border:1px solid #38bdf855;border-radius:18px;display:flex;padding:10px 4px;z-index:9999}
-.nav-btn{flex:1;background:none;border:none;color:#64748b;font-size:11px;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;touch-action:manipulation}
+.nav-btn{flex:1;background:none;border:none;color:#64748b;font-size:11px;font-weight:bold;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
 .nav-btn.active{color:#38bdf8}
 .hidden{display:none!important}
-#toast{position:fixed;top:15px;left:15px;right:15px;background:#0284c7;color:#fff;padding:12px;border-radius:12px;font-size:13px;font-weight:bold;text-align:center;z-index:99999;display:none;box-shadow:0 4px 15px rgba(0,0,0,0.5)}
+#toast{position:fixed;top:15px;left:15px;right:15px;background:#0284c7;color:#fff;padding:12px;border-radius:12px;font-size:13px;font-weight:bold;text-align:center;z-index:99999;display:none}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;padding:16px;z-index:10000}
 .modal-box{background:#1e293b;border:1px solid #38bdf866;border-radius:18px;padding:18px;width:100%;max-width:360px;text-align:center}
 </style>
 </head>
 <body>
 
+<div id="sys-status" class="status-bar">⚠️ جاري تشغيل النظام (إذا بقيت حمراء فالمتصفح يمنع الأكواد)</div>
 <div id="toast"></div>
 
-<!-- نافذة الدفع -->
 <div id="pay-modal" class="modal">
   <div class="modal-box">
     <h3 id="m-title" style="color:#38bdf8;margin-bottom:8px;">تأكيد الدفع عبر TON</h3>
     <p id="m-desc" style="font-size:13px;color:#cbd5e1;margin-bottom:10px;"></p>
-
-<div id="m-wallet" class="ref-box" style="font-size:11px;">UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO</div>
+    <div class="ref-box" style="font-size:11px;">UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO</div>
     <button type="button" id="m-open-wallet" class="btn btn-blue" style="margin-bottom:8px;">فتح محفظة Tonkeeper للدفع 💎</button>
     <button type="button" id="m-confirm" class="btn btn-green" style="margin-bottom:8px;">تأكيد إتمام التحويل ✅</button>
     <button type="button" id="m-close" class="btn" style="background:#334155;">إلغاء</button>
   </div>
 </div>
 
-<!-- نافذة ربط المحفظة -->
 <div id="wallet-modal" class="modal">
   <div class="modal-box">
     <h3 style="color:#38bdf8;margin-bottom:8px;">ربط محفظة TON 💳</h3>
@@ -64,7 +64,6 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
   </div>
 </div>
 
-<!-- الهيدر -->
 <div class="header">
   <div>
     <div style="font-size:17px;font-weight:bold;color:#38bdf8;">تون مجاني 💎</div>
@@ -73,7 +72,6 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
   <button type="button" id="w-btn" class="btn-sm">ربط المحفظة 💳</button>
 </div>
 
-<!-- تبويب التعدين -->
 <div id="p-mine" class="card active">
   <div id="s-badge" class="badge">الحساب غير موثق ⚠️</div>
   <div style="font-size:12px;color:#94a3b8;">إجمالي رصيدك القابل للسحب</div>
@@ -96,7 +94,6 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
   </div>
 </div>
 
-<!-- تبويب المهام -->
 <div id="p-tasks" class="card">
   <h3 style="color:#38bdf8;margin-bottom:12px;">المهام اليومية 📋</h3>
   <div class="task-item">
@@ -115,20 +112,17 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
   </div>
 </div>
 
-<!-- تبويب الأصدقاء -->
 <div id="p-friends" class="card">
   <h3 style="color:#38bdf8;margin-bottom:8px;">دعوة الأصدقاء 👥</h3>
   <p style="font-size:12px;color:#94a3b8;margin-bottom:12px;">احصل على +0.1 TON/يوم سرعة إضافية عن كل صديق يوثق حسابه!</p>
   <div style="background:#090d16;padding:12px;border-radius:14px;margin-bottom:12px;">
-
-<div style="font-size:12px;color:#94a3b8;">أصدقاؤك الموثقون</div>
+    <div style="font-size:12px;color:#94a3b8;">أصدقاؤك الموثقون</div>
     <div id="ref-txt" style="font-size:26px;font-weight:bold;margin-top:4px;">0</div>
   </div>
   <div id="ref-url" class="ref-box">https://t.me</div>
   <button type="button" id="btn-copy-ref" class="btn btn-blue">نسخ رابط الدعوة ومشاركته 📤</button>
 </div>
 
-<!-- تبويب السحب -->
 <div id="p-withdraw" class="card">
   <h3 style="color:#38bdf8;margin-bottom:10px;">سحب الأرباح 💸</h3>
   <div style="background:#090d16;padding:12px;border-radius:14px;margin-bottom:12px;text-align:right;font-size:12px;line-height:1.8;">
@@ -141,7 +135,6 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
   <button type="button" id="btn-withdraw" class="btn btn-green">تأكيد طلب السحب 🚀</button>
 </div>
 
-<!-- شريط التنقل السفلي -->
 <div class="bottom-nav">
   <button type="button" id="n-mine" class="nav-btn active"><span>⛏️</span><span>التعدين</span></button>
   <button type="button" id="n-tasks" class="nav-btn"><span>📋</span><span>المهام</span></button>
@@ -150,18 +143,24 @@ body{background:#090d16;color:#fff;min-height:100vh;padding:14px 14px 95px 14px}
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  var WALLET = 'UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO';
-  var BOT = 'https://t.me';
+(function() {
+  var st = document.getElementById("sys-status");
+  if (st) {
+    st.innerText = "النظام والأزرار تعمل بنجاح ✅";
+    st.className = "status-bar ready";
+  }
+
+  var WALLET = "UQCMbAM6SJr8AzFZvSFOfTGod5f7Jsyss35uhK-Y2A9cIGsO";
+  var BOT = "https://t.me";
   var toastTimer = null;
 
   function toast(m) {
-    var el = document.getElementById('toast');
+    var el = document.getElementById("toast");
     el.innerText = m;
-    el.style.display = 'block';
+    el.style.display = "block";
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function() { el.style.display = 'none'; }, 3000);
+    toastTimer = setTimeout(function() { el.style.display = "none"; }, 3000);
   }
 
   function go(tab) {
-    var tabs = ['mine', 'tasks', 'friends', 'withdraw'];
+    var tabs = ["mine", "tasks", "friends", "withdraw"];
