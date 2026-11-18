@@ -14,7 +14,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 16px 16px 95px 16px;
+      padding: 16px 16px 100px 16px;
       user-select: none;
     }
     .header {
@@ -31,17 +31,7 @@
       box-shadow: 0 10px 35px rgba(0, 136, 204, 0.15); margin-top: 16px;
       display: none;
     }
-    input[name="tabs"] { display: none; }
-    #r-mine:checked ~ .content-area #tab-mine { display: block; }
-    #r-tasks:checked ~ .content-area #tab-tasks { display: block; }
-    #r-friends:checked ~ .content-area #tab-friends { display: block; }
-    #r-withdraw:checked ~ .content-area #tab-withdraw { display: block; }
-
-    #r-mine:checked ~ .bottom-nav label[for="r-mine"],
-    #r-tasks:checked ~ .bottom-nav label[for="r-tasks"],
-    #r-friends:checked ~ .bottom-nav label[for="r-friends"],
-    #r-withdraw:checked ~ .bottom-nav label[for="r-withdraw"] { color: #38bdf8; }
-
+    .card.active-card { display: block; }
     .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; margin-bottom: 14px; }
     .badge-unverified { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); }
     .badge-verified { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); }
@@ -54,13 +44,14 @@
     .state-off { color: #fbbf24; font-weight: 700; }
     .state-on { color: #34d399; font-weight: 700; }
     .unclaimed-val { font-size: 26px; font-weight: 800; font-family: monospace; color: #7dd3fc; margin: 4px 0; }
-    .btn { display: block; width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 14px; font-weight: 800; color: #fff; cursor: pointer; text-decoration: none; text-align: center; }
+    .btn { display: block; width: 100%; padding: 14px; border: none; border-radius: 14px; font-size: 14px; font-weight: 800; color: #fff; cursor: pointer; text-decoration: none; text-align: center; touch-action: manipulation; }
     .btn:active { transform: scale(0.97); }
     .btn-verify { background: linear-gradient(90deg, #0284c7, #2563eb); }
     .btn-claim { background: linear-gradient(90deg, #059669, #0d9488); }
     .btn-boost { background: linear-gradient(90deg, #d97706, #ea580c); margin-top: 8px; }
+    .btn-wallet-fallback { background: #0284c7; color: #fff; border: none; padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .btn-small { display: inline-block; padding: 8px 16px; font-size: 12px; border-radius: 10px; width: auto; background: #0284c7; color: #fff; text-decoration: none; font-weight: 700; border: none; cursor: pointer; }
-    .btn-done { background: #1e293b; color: #64748b; }
+    .btn-done { background: #1e293b; color: #64748b; pointer-events: none; }
     .boost-box {
       background: rgba(217, 119, 6, 0.1); border: 1px solid rgba(245, 158, 11, 0.35);
       border-radius: 18px; padding: 14px; margin-top: 16px; text-align: right;
@@ -86,11 +77,12 @@
     }
     .bottom-nav {
       position: fixed; bottom: 12px; left: 16px; right: 16px;
-      background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(56, 189, 248, 0.25);
+      background: rgba(15, 23, 42, 0.98); border: 1px solid rgba(56, 189, 248, 0.35);
       border-radius: 20px; display: flex; justify-content: space-around; padding: 10px 4px;
-      z-index: 9999;
+      z-index: 9999; box-shadow: 0 -4px 20px rgba(0,0,0,0.6);
     }
-    .nav-item { color: #64748b; font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; }
+    .nav-item { background: none; border: none; color: #64748b; font-size: 11px; font-weight: 700; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; touch-action: manipulation; }
+    .nav-item.active { color: #38bdf8; }
     .nav-icon { font-size: 19px; }
     .hidden { display: none !important; }
     #toast {
@@ -106,29 +98,26 @@
 
   <div id="toast"></div>
 
-  <input type="radio" name="tabs" id="r-mine" checked>
-  <input type="radio" name="tabs" id="r-tasks">
-  <input type="radio" name="tabs" id="r-friends">
-  <input type="radio" name="tabs" id="r-withdraw">
-
   <div class="content-area">
     <div class="header">
       <div>
         <div class="app-title">تون مجاني 💎</div>
         <div id="user-name" class="user-tag">مستخدم نشط ✅</div>
       </div>
-      <div id="ton-connect"></div>
+      <div id="ton-connect">
+        <button type="button" id="fallback-wallet-btn" class="btn-wallet-fallback">Connect Wallet 💳</button>
+      </div>
     </div>
 
     <!-- 1. قسم التعدين -->
-    <div id="tab-mine" class="card">
+    <div id="tab-mine" class="card active-card">
       <div id="status-badge" class="badge badge-unverified">الحساب غير موثق ⚠️</div>
       <div class="balance-label">إجمالي رصيدك القابل للسحب</div>
       <div class="balance-value"><span id="balance-display" style="color:#fff;font-size:34px;">0.000000</span> <span>TON</span></div>
 
       <div class="miner-box">
         <div class="miner-top">
-          <span>السرعة: <span id="speed-display" class="speed-val">0.500 TON / يوم</span></span>
+          <span>السرعة: <span id="speed-display" class="speed-val">0.020 TON / يوم</span></span>
           <span id="mining-state" class="state-off">متوقف ⏸️</span>
         </div>
         <div id="unclaimed-display" class="unclaimed-val">0.000000</div>
@@ -161,14 +150,14 @@
             <div class="task-title">اشترك في قناة توصيات بيناري أوبشن 📈</div>
             <div class="task-reward">+0.003 TON</div>
           </div>
-          <a href="https://t.me" target="_blank" class="btn-small" onclick="completeTask('join_forexgood45', 0.003, this)">ابدأ</a>
+          <a href="https://t.me" target="_blank" class="btn-small" id="task-btn-1">ابدأ</a>
         </div>
         <div class="task-item">
           <div>
             <div class="task-title">شارك التطبيق مع صديق</div>
             <div class="task-reward">+0.02 TON</div>
           </div>
-          <a id="share-task-link" href="https://t.me" target="_blank" class="btn-small" onclick="completeTask('share_story', 0.02, this)">ابدأ</a>
+          <a id="share-task-link" href="https://t.me" target="_blank" class="btn-small">ابدأ</a>
         </div>
       </div>
     </div>
@@ -181,3 +170,10 @@
       </p>
       <div style="background:rgba(9,13,22,0.65); padding:14px; border-radius:16px; margin-bottom:14px;">
         <div style="font-size:12px; color:#94a3b8;">عدد أصدقائك الموثقين</div>
+        <div id="ref-count" style="font-size:28px; font-weight:900; color:#fff; margin-top:4px;">0</div>
+      </div>
+      <div style="font-size:12px; color:#94a3b8; text-align:right;">رابط الدعوة الخاص بك:</div>
+      <div id="ref-link" class="ref-box">https://t.me</div>
+      <button type="button" id="copy-ref-btn" class="btn btn-verify">نسخ رابط الدعوة ومشاركته 📤</button>
+    </div>
+
