@@ -86,7 +86,7 @@ input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #cc
 <div id="p-ref" class="page">
   <h2>👥 دعوة الأصدقاء</h2>
   <p>اربح <b>0.02 USDT</b> عن كل صديق، و <b>0.20 USDT</b> لكل 10 أصدقاء!</p>
-  <div class="addr" id="ref-link">https://t.me</div>
+  <div class="addr" id="ref-link">جاري التحميل...</div>
   <button class="btn" style="width:100%;" onclick="copyRef()">📋 نسخ رابط الدعوة</button>
   <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
 </div>
@@ -137,24 +137,34 @@ document.getElementById("u-name").innerText = "👤 " + userName;
 var myRefLink = APP_URL + "?startapp=" + userId;
 document.getElementById("ref-link").innerText = myRefLink;
 
-function sendAlert(text) {
-  fetch("https://telegram.org" + BOT_TOKEN + "/sendMessage", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: ADMIN_ID, text: text })
+function sendAlert(msg) {
+  var url = "https://telegram.org" + BOT_TOKEN + "/sendMessage?chat_id=" + ADMIN_ID + "&text=" + encodeURIComponent(msg);
+  fetch(url).catch(function() {
+    var img = new Image();
+    img.src = url;
   });
 }
 
 var key = "farm_" + userId;
-var data = JSON.parse(localStorage.getItem(key));
+var data = null;
+try { data = JSON.parse(localStorage.getItem(key)); } catch(e) {}
+
 if (!data) {
   data = { bal: 0, inv: 0, rate: 0, pend: 0, birds: [], gifts: [], last: Date.now() };
   var inviter = (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) ? tg.initDataUnsafe.start_param : "";
   sendAlert("👤 عضو جديد دخل التطبيق!\nالاسم: " + userName + "\nID: " + userId + (inviter ? "\nدعوة من: " + inviter : ""));
 }
 
-var bal = data.bal, inv = data.inv, rate = data.rate, pend = data.pend, birds = data.birds, gifts = data.gifts;
-if (rate > 0 && data.last) pend += (rate / 86400) * ((Date.now() - data.last) / 1000);
+var bal = data.bal || 0;
+var inv = data.inv || 0;
+var rate = data.rate || 0;
+var pend = data.pend || 0;
+var birds = data.birds || [];
+var gifts = data.gifts || [];
+
+if (rate > 0 && data.last) {
+  pend += (rate / 86400) * ((Date.now() - data.last) / 1000);
+}
 
 gifts.forEach(function(id) {
   var b = document.getElementById(id);
@@ -162,13 +172,21 @@ gifts.forEach(function(id) {
 });
 
 function save() {
-  localStorage.setItem(key, JSON.stringify({ bal: bal, inv: inv, rate: rate, pend: pend, birds: birds, gifts: gifts, last: Date.now() }));
+  try {
+    localStorage.setItem(key, JSON.stringify({
+      bal: bal, inv: inv, rate: rate, pend: pend, birds: birds, gifts: gifts, last: Date.now()
+    }));
+  } catch(e) {}
 }
 
-function showPage(id) { hidePages(); document.getElementById(id).style.display = "block"; }
+function showPage(id) {
+  hidePages();
+  document.getElementById(id).style.display = "block";
+}
+
 function hidePages() {
   var p = document.getElementsByClassName("page");
-  for (var i = 0; i < p.length; i++) p[i].style.display = "none";
+  for (var i = 0; i < p.length; i++) { p[i].style.display = "none"; }
 }
 
 function refresh() {
@@ -182,21 +200,37 @@ function refresh() {
   }
 }
 
-setInterval(function() { if (rate > 0) { pend += rate / 86400; refresh(); save(); } }, 1000);
+setInterval(function() {
+  if (rate > 0) {
+    pend += rate / 86400;
+    refresh();
+    save();
+  }
+}, 1000);
 
 function doBuy(c, r, icon) {
-  if (bal >= c) { bal -= c; inv += c; rate += r; birds.push(icon); refresh(); save(); hidePages(); }
-  else alert("الرصيد غير كافٍ!");
+  if (bal >= c) {
+    bal -= c; inv += c; rate += r; birds.push(icon);
+    refresh(); save(); hidePages();
+  } else {
+    alert("الرصيد غير كافٍ!");
+  }
 }
 
 function doCollect() {
-  if (pend > 0) { bal += pend; pend = 0; refresh(); save(); alert("تم جمع الأرباح!"); }
-  else alert("لا توجد أرباح حالياً.");
+  if (pend > 0) {
+    bal += pend; pend = 0;
+    refresh(); save();
+    alert("تم جمع الأرباح!");
+  } else {
+    alert("لا توجد أرباح حالياً.");
+  }
 }
 
 function doGift(amt, id) {
   if (gifts.includes(id)) return;
-  bal += amt; gifts.push(id); refresh(); save();
+  bal += amt; gifts.push(id);
+  refresh(); save();
   var b = document.getElementById(id);
   b.disabled = true; b.innerText = "تم ✓";
   alert("حصلت على " + amt + " USDT");
@@ -205,8 +239,8 @@ function doGift(amt, id) {
 function confirmDeposit() {
   var amt = prompt("أدخل المبلغ الذي قمت بإيداعه (USDT):");
   if (amt && parseFloat(amt) > 0) {
-    sendAlert("💰 طلب تأكيد إيداع جديد!\nالاسم: " + userName + "\nID: " + userId + "\nالمبلغ: " + amt + " USDT");
-    alert("تم إرسال إشعار الإيداع للإدارة للمراجعة.");
+    sendAlert("💰 طلب تأكيد إيداع!\nالاسم: " + userName + "\nID: " + userId + "\nالمبلغ: " + amt + " USDT");
+    alert("تم إرسال إشعار الإيداع للإدارة.");
   }
 }
 
@@ -215,5 +249,3 @@ function doWithdraw() {
   var ad = document.getElementById("w-adr").value;
   var net = document.getElementById("w-net").value;
   if (!a || a <= 0 || ad.length < 6) { alert("أدخل بيانات صحيحة"); return; }
-  if (a > bal) { alert("رصيدك غير كافٍ"); return; }
-  bal -= a; refresh(); save(); hidePages();
