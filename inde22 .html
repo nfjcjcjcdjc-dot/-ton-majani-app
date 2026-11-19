@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مزرعة الدجاج</title>
+<script src="https://telegram.org"></script>
+<script src="https://telegram.org"></script>
+<style>
+body { margin: 0; font-family: sans-serif; background: #5ea832; color: #fff; display: flex; flex-direction: column; height: 100vh; }
+.top { padding: 12px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); }
+.cards { display: flex; gap: 10px; padding: 10px; }
+.card { flex: 1; background: #fff; color: #111; padding: 10px; border-radius: 12px; font-weight: bold; }
+.center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.box { background: rgba(0,0,0,0.2); border: 2px dashed #fff; border-radius: 15px; padding: 15px; width: 85%; font-size: 28px; margin: 10px 0; }
+.actions { display: flex; gap: 10px; padding: 10px; }
+.btn-collect { flex: 1; background: #f59e0b; color: #fff; border: 2px solid #fff; border-radius: 12px; padding: 10px; font-weight: bold; font-size: 16px; }
+.rate { flex: 1; background: #fff; color: #16a34a; border-radius: 12px; padding: 10px; text-align: center; font-weight: bold; }
+.nav { background: #fff; display: flex; justify-content: space-around; padding: 10px 0; border-radius: 15px 15px 0 0; }
+.nav button { background: none; border: none; font-weight: bold; color: #333; font-size: 13px; }
+.page { display: none; position: fixed; inset: 0; background: #fff; color: #111; padding: 20px; overflow-y: auto; z-index: 10; }
+.row { border: 1px solid #ccc; padding: 12px; border-radius: 10px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+.btn { background: #16a34a; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+.btn:disabled { background: #9ca3af; cursor: not-allowed; }
+.btn-red { background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 15px; }
+input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+.addr { background: #eee; padding: 10px; border-radius: 8px; word-break: break-all; font-family: monospace; font-size: 12px; margin: 8px 0; }
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div><b id="u-name">👤 جاري التحميل...</b></div>
+  <button class="btn" onclick="showPage('p-wallet')">+ إيداع USDT</button>
+</div>
+
+<div class="cards">
+  <div class="card"><small>الرصيد المتاح</small><div id="v-bal">0.00 USDT</div></div>
+  <div class="card"><small>الاستثمار</small><div id="v-inv">0.00 USDT</div></div>
+</div>
+
+<div class="center">
+  <div style="font-size:60px;">🏡</div>
+  <div class="box" id="v-farm">لا يوجد دجاج حالياً</div>
+  <div style="background:#fff; color:#333; padding:5px 15px; border-radius:20px; font-size:13px;" id="v-msg">اشتر الدجاج لبدء الربح</div>
+</div>
+
+<div class="actions">
+  <button class="btn-collect" onclick="doCollect()">🥚 جمع الأرباح<br><small id="v-pend">0.0000</small></button>
+  <div class="rate"><div id="v-rate">0.00 / يوم</div><small style="color:#666;">دورة 24 ساعة</small></div>
+</div>
+
+<div class="nav">
+  <button onclick="hidePages()">🏠<br>الرئيسية</button>
+  <button onclick="showPage('p-shop')">🏪<br>المتجر</button>
+  <button onclick="showPage('p-gift')">🎁<br>الهدايا</button>
+  <button onclick="showPage('p-ref')">👥<br>الأصدقاء</button>
+  <button onclick="showPage('p-wallet')">👛<br>المحفظة</button>
+</div>
+
+<!-- المتجر -->
+<div id="p-shop" class="page">
+  <h2>🏪 متجر الدجاج</h2>
+  <div class="row">
+    <div><b>🐔 دجاجة عادية</b><br><small>الربح: 0.50 USDT/يوم</small></div>
+    <button class="btn" onclick="doBuy(5, 0.5, '🐔')">شراء 5$</button>
+  </div>
+  <div class="row">
+    <div><b>🐓 دجاجة ذهبية</b><br><small>الربح: 1.50 USDT/يوم</small></div>
+    <button class="btn" onclick="doBuy(12, 1.5, '🐓')">شراء 12$</button>
+  </div>
+  <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
+</div>
+
+<!-- الهدايا -->
+<div id="p-gift" class="page">
+  <h2>🎁 الهدايا اليومية</h2>
+  <div class="row">
+    <div><b>🎉 هدية الدخول اليومي</b><br><small>+0.05 USDT</small></div>
+    <button class="btn" id="b-g1" onclick="doGift(0.05, 'b-g1')">استلام</button>
+  </div>
+  <div class="row">
+    <div><b>📢 مكافأة الترحيب</b><br><small>+0.10 USDT</small></div>
+    <button class="btn" id="b-g2" onclick="doGift(0.10, 'b-g2')">استلام</button>
+  </div>
+  <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
+</div>
+
+<!-- الأصدقاء -->
+<div id="p-ref" class="page">
+  <h2>👥 دعوة الأصدقاء</h2>
+  <p>اربح <b>0.02 USDT</b> عن كل صديق، و <b>0.20 USDT</b> لكل 10 أصدقاء!</p>
+  <div class="addr" id="ref-link">جاري توليد الرابط...</div>
+  <button class="btn" style="width:100%;" onclick="copyRef()">📋 نسخ رابط الدعوة</button>
+  <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
+</div>
+
+<!-- المحفظة -->
+<div id="p-wallet" class="page">
+  <h2>👛 المحفظة (إيداع وسحب)</h2>
+  <p><b>1. إيداع USDT (شبكة BEP20 فقط):</b></p>
+  <div class="addr">0xcdEeeD85344992116D7f0B8991d316d891e79B4E</div>
+  <button class="btn" style="width:100%;" onclick="doCopy('0xcdEeeD85344992116D7f0B8991d316d891e79B4E')">📋 نسخ عنوان الإيداع</button>
+  <button class="btn" style="width:100%; margin-top:8px; background:#2563eb;" onclick="confirmDeposit()">✅ تم الإيداع (إشعار الإدارة)</button>
+  <hr style="margin:15px 0;">
+  <p><b>2. طلب سحب الأرباح:</b></p>
+  <select id="w-net">
+    <option value="BEP20">شبكة BEP20</option>
+    <option value="TRC20">شبكة TRC20</option>
+    <option value="TON">شبكة TON</option>
+  </select>
+  <input type="number" id="w-amt" placeholder="المبلغ (USDT)">
+  <input type="text" id="w-adr" placeholder="عنوان محفظتك">
+  <button class="btn" style="width:100%; background:#f59e0b;" onclick="doWithdraw()">إرسال طلب السحب</button>
+  <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
+</div>
+
+<script>
+var BOT_USERNAME = "TonMajani_bot"; 
+
+var tg = window.Telegram && window.Telegram.WebApp;
+var userId = "guest_user";
+var userName = "لاعب";
+
+if (tg) {
+  tg.ready();
+  tg.expand();
+  if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+    userId = tg.initDataUnsafe.user.id;
+    userName = tg.initDataUnsafe.user.first_name || "لاعب";
+  }
+}
+
+document.getElementById('u-name').innerText = "👤 " + userName;
+
+var myRefLink = "https://t.me" + BOT_USERNAME + "?start=" + userId;
+document.getElementById('ref-link').innerText = myRefLink;
+
+var storageKey = "chicken_farm_" + userId;
+var savedData = JSON.parse(localStorage.getItem(storageKey)) || {
+  bal: 0,
+  inv: 0,
+  rate: 0,
+  pend: 0,
+  birds: [],
+  gifts: [],
+  lastTime: Date.now()
+};
+
+var bal = savedData.bal;
+var inv = savedData.inv;
+var rate = savedData.rate;
+var pend = savedData.pend;
+var birds = savedData.birds;
+var gifts = savedData.gifts;
+
+if (rate > 0 && savedData.lastTime) {
+  var secondsPassed = (Date.now() - savedData.lastTime) / 1000;
+  if (secondsPassed > 0) {
+    pend += (rate / 86400) * secondsPassed;
+  }
+}
+
+gifts.forEach(function(btnId) {
+  var b = document.getElementById(btnId);
+  if (b) { b.disabled = true; b.innerText = 'تم ✓'; }
+});
+
+function saveData() {
+  var dataToSave = {
+    bal: bal,
+    inv: inv,
+    rate: rate,
+    pend: pend,
+    birds: birds,
+    gifts: gifts,
+    lastTime: Date.now()
+  };
+  localStorage.setItem(storageKey, JSON.stringify(dataToSave));
+}
+
+function showPage(id) {
+  hidePages();
+  document.getElementById(id).style.display = 'block';
+}
+function hidePages() {
+  var pages = document.getElementsByClassName('page');
+  for (var i = 0; i < pages.length; i++) { pages[i].style.display = 'none'; }
+}
+function refresh() {
+  document.getElementById('v-bal').innerText = bal.toFixed(2) + ' USDT';
+  document.getElementById('v-inv').innerText = inv.toFixed(2) + ' USDT';
+  document.getElementById('v-rate').innerText = rate.toFixed(2) + ' / يوم';
+  document.getElementById('v-pend').innerText = pend.toFixed(4);
+  if (birds.length > 0) {
+    document.getElementById('v-farm').innerText = birds.join(' ');
+    document.getElementById('v-msg').innerText = 'لديك ' + birds.length + ' دجاجات';
+  }
+}
+
+setInterval(function() {
+  if (rate > 0) { 
+    pend += rate / 86400; 
+    refresh(); 
+    saveData();
+  }
+}, 1000);
+
+function doBuy(c, r, icon) {
+  if (bal >= c) { 
+    bal -= c; inv += c; rate += r; birds.push(icon); 
+    refresh(); saveData(); hidePages(); 
+  } else { 
+    alert('الرصيد غير كافٍ! اجمع الهدايا أو قم بالإيداع.'); 
+  }
+}
+function doCollect() {
+  if (pend > 0) { 
+    bal += pend; pend = 0; 
+    refresh(); saveData(); 
+    alert('تم جمع الأرباح!'); 
+  } else { 
+    alert('لا توجد أرباح حالياً.'); 
+  }
+}
+function doGift(amt, btnId) {
+  if (gifts.includes(btnId)) return;
+  bal += amt; 
+  gifts.push(btnId);
+  refresh(); saveData();
+  var b = document.getElementById(btnId);
+  b.disabled = true; b.innerText = 'تم ✓';
+  alert('حصلت على ' + amt + ' USDT');
+}
+function doWithdraw() {
+  var a = parseFloat(document.getElementById('w-amt').value);
+  var ad = document.getElementById('w-adr').value;
+  var net = document.getElementById('w-net').value;
+  if (!a || a <= 0 || ad.length < 6) { alert('أدخل بيانات صحيحة'); return; }
+  if (a > bal) { alert('رصيدك غير كافٍ'); return; }
+  bal -= a; 
+  refresh(); saveData(); hidePages();
+  alert('تم طلب سحب ' + a + ' USDT على شبكة ' + net);
+}
+function copyRef() {
+  doCopy(myRefLink);
+}
+function doCopy(t) {
+  var el = document.createElement('textarea');
+  el.value = t; document.body.appendChild(el);
+  el.select(); document.execCommand('copy');
+  document.body.removeChild(el);
+  alert('تم النسخ:\n' + t);
+}
+
+refresh();
+saveData();
+</script>
+</body>
+</html>
