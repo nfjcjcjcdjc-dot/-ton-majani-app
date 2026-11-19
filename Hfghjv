@@ -1,11 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>مزرعة الدجاج</title>
-<script src="https://telegram.org"></script>
 <script src="https://telegram.org"></script>
 <style>
 body { margin: 0; font-family: sans-serif; background: #5ea832; color: #fff; display: flex; flex-direction: column; height: 100vh; }
@@ -21,8 +19,8 @@ body { margin: 0; font-family: sans-serif; background: #5ea832; color: #fff; dis
 .nav button { background: none; border: none; font-weight: bold; color: #333; font-size: 13px; }
 .page { display: none; position: fixed; inset: 0; background: #fff; color: #111; padding: 20px; overflow-y: auto; z-index: 10; }
 .row { border: 1px solid #ccc; padding: 12px; border-radius: 10px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; }
-.btn { background: #16a34a; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-.btn:disabled { background: #9ca3af; cursor: not-allowed; }
+.btn { background: #16a34a; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; }
+.btn:disabled { background: #9ca3af; }
 .btn-red { background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 15px; }
 input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
 .addr { background: #eee; padding: 10px; border-radius: 8px; word-break: break-all; font-family: monospace; font-size: 12px; margin: 8px 0; }
@@ -31,7 +29,7 @@ input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #cc
 <body>
 
 <div class="top">
-  <div><b id="u-name">👤 جاري التحميل...</b></div>
+  <div><b id="u-name">👤 عضو</b></div>
   <button class="btn" onclick="showPage('p-wallet')">+ إيداع USDT</button>
 </div>
 
@@ -59,7 +57,6 @@ input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #cc
   <button onclick="showPage('p-wallet')">👛<br>المحفظة</button>
 </div>
 
-<!-- المتجر -->
 <div id="p-shop" class="page">
   <h2>🏪 متجر الدجاج</h2>
   <div class="row">
@@ -73,7 +70,6 @@ input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #cc
   <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
 </div>
 
-<!-- الهدايا -->
 <div id="p-gift" class="page">
   <h2>🎁 الهدايا اليومية</h2>
   <div class="row">
@@ -87,16 +83,14 @@ input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #cc
   <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
 </div>
 
-<!-- الأصدقاء -->
 <div id="p-ref" class="page">
   <h2>👥 دعوة الأصدقاء</h2>
   <p>اربح <b>0.02 USDT</b> عن كل صديق، و <b>0.20 USDT</b> لكل 10 أصدقاء!</p>
-  <div class="addr" id="ref-link">جاري توليد الرابط...</div>
+  <div class="addr" id="ref-link">https://t.me</div>
   <button class="btn" style="width:100%;" onclick="copyRef()">📋 نسخ رابط الدعوة</button>
   <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
 </div>
 
-<!-- المحفظة -->
 <div id="p-wallet" class="page">
   <h2>👛 المحفظة (إيداع وسحب)</h2>
   <p><b>1. إيداع USDT (شبكة BEP20 فقط):</b></p>
@@ -117,145 +111,109 @@ input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #cc
 </div>
 
 <script>
-var BOT_USERNAME = "TonMajani_bot"; 
+var BOT_TOKEN = "9228592132:AAGfNGoQxKfCeDMfIExl7eLlMlnnMjsz5NU";
+var ADMIN_ID = "1267071848";
+var APP_URL = "https://t.me";
 
 var tg = window.Telegram && window.Telegram.WebApp;
-var userId = "guest_user";
-var userName = "لاعب";
+var userId = "";
+var userName = "عضو";
 
 if (tg) {
   tg.ready();
   tg.expand();
   if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-    userId = tg.initDataUnsafe.user.id;
-    userName = tg.initDataUnsafe.user.first_name || "لاعب";
+    userId = String(tg.initDataUnsafe.user.id);
+    userName = tg.initDataUnsafe.user.first_name || "عضو";
   }
 }
 
-document.getElementById('u-name').innerText = "👤 " + userName;
-
-var myRefLink = "https://t.me" + BOT_USERNAME + "?start=" + userId;
-document.getElementById('ref-link').innerText = myRefLink;
-
-var storageKey = "chicken_farm_" + userId;
-var savedData = JSON.parse(localStorage.getItem(storageKey)) || {
-  bal: 0,
-  inv: 0,
-  rate: 0,
-  pend: 0,
-  birds: [],
-  gifts: [],
-  lastTime: Date.now()
-};
-
-var bal = savedData.bal;
-var inv = savedData.inv;
-var rate = savedData.rate;
-var pend = savedData.pend;
-var birds = savedData.birds;
-var gifts = savedData.gifts;
-
-if (rate > 0 && savedData.lastTime) {
-  var secondsPassed = (Date.now() - savedData.lastTime) / 1000;
-  if (secondsPassed > 0) {
-    pend += (rate / 86400) * secondsPassed;
-  }
+if (!userId) {
+  userId = localStorage.getItem("saved_uid") || String(Math.floor(10000000 + Math.random() * 90000000));
+  localStorage.setItem("saved_uid", userId);
 }
 
-gifts.forEach(function(btnId) {
-  var b = document.getElementById(btnId);
-  if (b) { b.disabled = true; b.innerText = 'تم ✓'; }
+document.getElementById("u-name").innerText = "👤 " + userName;
+var myRefLink = APP_URL + "?startapp=" + userId;
+document.getElementById("ref-link").innerText = myRefLink;
+
+function sendAlert(text) {
+  fetch("https://telegram.org" + BOT_TOKEN + "/sendMessage", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: ADMIN_ID, text: text })
+  });
+}
+
+var key = "farm_" + userId;
+var data = JSON.parse(localStorage.getItem(key));
+if (!data) {
+  data = { bal: 0, inv: 0, rate: 0, pend: 0, birds: [], gifts: [], last: Date.now() };
+  var inviter = (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) ? tg.initDataUnsafe.start_param : "";
+  sendAlert("👤 عضو جديد دخل التطبيق!\nالاسم: " + userName + "\nID: " + userId + (inviter ? "\nدعوة من: " + inviter : ""));
+}
+
+var bal = data.bal, inv = data.inv, rate = data.rate, pend = data.pend, birds = data.birds, gifts = data.gifts;
+if (rate > 0 && data.last) pend += (rate / 86400) * ((Date.now() - data.last) / 1000);
+
+gifts.forEach(function(id) {
+  var b = document.getElementById(id);
+  if (b) { b.disabled = true; b.innerText = "تم ✓"; }
 });
 
-function saveData() {
-  var dataToSave = {
-    bal: bal,
-    inv: inv,
-    rate: rate,
-    pend: pend,
-    birds: birds,
-    gifts: gifts,
-    lastTime: Date.now()
-  };
-  localStorage.setItem(storageKey, JSON.stringify(dataToSave));
+function save() {
+  localStorage.setItem(key, JSON.stringify({ bal: bal, inv: inv, rate: rate, pend: pend, birds: birds, gifts: gifts, last: Date.now() }));
 }
 
-function showPage(id) {
-  hidePages();
-  document.getElementById(id).style.display = 'block';
-}
+function showPage(id) { hidePages(); document.getElementById(id).style.display = "block"; }
 function hidePages() {
-  var pages = document.getElementsByClassName('page');
-  for (var i = 0; i < pages.length; i++) { pages[i].style.display = 'none'; }
+  var p = document.getElementsByClassName("page");
+  for (var i = 0; i < p.length; i++) p[i].style.display = "none";
 }
+
 function refresh() {
-  document.getElementById('v-bal').innerText = bal.toFixed(2) + ' USDT';
-  document.getElementById('v-inv').innerText = inv.toFixed(2) + ' USDT';
-  document.getElementById('v-rate').innerText = rate.toFixed(2) + ' / يوم';
-  document.getElementById('v-pend').innerText = pend.toFixed(4);
+  document.getElementById("v-bal").innerText = bal.toFixed(2) + " USDT";
+  document.getElementById("v-inv").innerText = inv.toFixed(2) + " USDT";
+  document.getElementById("v-rate").innerText = rate.toFixed(2) + " / يوم";
+  document.getElementById("v-pend").innerText = pend.toFixed(4);
   if (birds.length > 0) {
-    document.getElementById('v-farm').innerText = birds.join(' ');
-    document.getElementById('v-msg').innerText = 'لديك ' + birds.length + ' دجاجات';
+    document.getElementById("v-farm").innerText = birds.join(" ");
+    document.getElementById("v-msg").innerText = "لديك " + birds.length + " دجاجات";
   }
 }
 
-setInterval(function() {
-  if (rate > 0) { 
-    pend += rate / 86400; 
-    refresh(); 
-    saveData();
-  }
-}, 1000);
+setInterval(function() { if (rate > 0) { pend += rate / 86400; refresh(); save(); } }, 1000);
 
 function doBuy(c, r, icon) {
-  if (bal >= c) { 
-    bal -= c; inv += c; rate += r; birds.push(icon); 
-    refresh(); saveData(); hidePages(); 
-  } else { 
-    alert('الرصيد غير كافٍ! اجمع الهدايا أو قم بالإيداع.'); 
-  }
-}
-function doCollect() {
-  if (pend > 0) { 
-    bal += pend; pend = 0; 
-    refresh(); saveData(); 
-    alert('تم جمع الأرباح!'); 
-  } else { 
-    alert('لا توجد أرباح حالياً.'); 
-  }
-}
-function doGift(amt, btnId) {
-  if (gifts.includes(btnId)) return;
-  bal += amt; 
-  gifts.push(btnId);
-  refresh(); saveData();
-  var b = document.getElementById(btnId);
-  b.disabled = true; b.innerText = 'تم ✓';
-  alert('حصلت على ' + amt + ' USDT');
-}
-function doWithdraw() {
-  var a = parseFloat(document.getElementById('w-amt').value);
-  var ad = document.getElementById('w-adr').value;
-  var net = document.getElementById('w-net').value;
-  if (!a || a <= 0 || ad.length < 6) { alert('أدخل بيانات صحيحة'); return; }
-  if (a > bal) { alert('رصيدك غير كافٍ'); return; }
-  bal -= a; 
-  refresh(); saveData(); hidePages();
-  alert('تم طلب سحب ' + a + ' USDT على شبكة ' + net);
-}
-function copyRef() {
-  doCopy(myRefLink);
-}
-function doCopy(t) {
-  var el = document.createElement('textarea');
-  el.value = t; document.body.appendChild(el);
-  el.select(); document.execCommand('copy');
-  document.body.removeChild(el);
-  alert('تم النسخ:\n' + t);
+  if (bal >= c) { bal -= c; inv += c; rate += r; birds.push(icon); refresh(); save(); hidePages(); }
+  else alert("الرصيد غير كافٍ!");
 }
 
-refresh();
-saveData();
-</script>
-</body>
-</html>
+function doCollect() {
+  if (pend > 0) { bal += pend; pend = 0; refresh(); save(); alert("تم جمع الأرباح!"); }
+  else alert("لا توجد أرباح حالياً.");
+}
+
+function doGift(amt, id) {
+  if (gifts.includes(id)) return;
+  bal += amt; gifts.push(id); refresh(); save();
+  var b = document.getElementById(id);
+  b.disabled = true; b.innerText = "تم ✓";
+  alert("حصلت على " + amt + " USDT");
+}
+
+function confirmDeposit() {
+  var amt = prompt("أدخل المبلغ الذي قمت بإيداعه (USDT):");
+  if (amt && parseFloat(amt) > 0) {
+    sendAlert("💰 طلب تأكيد إيداع جديد!\nالاسم: " + userName + "\nID: " + userId + "\nالمبلغ: " + amt + " USDT");
+    alert("تم إرسال إشعار الإيداع للإدارة للمراجعة.");
+  }
+}
+
+function doWithdraw() {
+  var a = parseFloat(document.getElementById("w-amt").value);
+  var ad = document.getElementById("w-adr").value;
+  var net = document.getElementById("w-net").value;
+  if (!a || a <= 0 || ad.length < 6) { alert("أدخل بيانات صحيحة"); return; }
+  if (a > bal) { alert("رصيدك غير كافٍ"); return; }
+  bal -= a; refresh(); save(); hidePages();
