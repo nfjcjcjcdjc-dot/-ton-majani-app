@@ -3,331 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>لعبة المزرعة - Telegram Mini App</title>
-    <!-- مكتبة تيليجرام الرسمية -->
-    <script src="https://telegram.org"></script>
-    <link href="https://googleapis.com" rel="stylesheet">
+    <title>مزرعة الدجاج</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Cairo', sans-serif;
-            user-select: none;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
         body {
-            background-color: #5ea832;
-            background-image: radial-gradient(#71bf40 15%, transparent 16%), radial-gradient(#71bf40 15%, transparent 16%);
-            background-size: 40px 40px;
-            background-position: 0 0, 20px 20px;
-            color: #fff;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow: hidden;
+            background: #5ea832; color: #fff; min-height: 100vh;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
-
-        /* الشريط العلوي */
-        .top-bar {
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(0, 0, 0, 0.35);
-            padding: 5px 12px;
-            border-radius: 25px;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #f59e0b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .user-info h4 { font-size: 14px; line-height: 1.2; }
-        .user-info span { font-size: 11px; color: #d1d5db; }
-
-        /* بطاقات الأرصدة */
-        .balances {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 0 15px;
-            margin-top: 5px;
-        }
-
-        .balance-card {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.92);
-            color: #1f2937;
-            border-radius: 16px;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-        }
-
-        .balance-text strong { display: block; font-size: 15px; color: #111827; }
-        .balance-text small { font-size: 11px; color: #6b7280; }
-
-        .usdt-icon {
-            width: 30px;
-            height: 30px;
-            background: #26a17b;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        /* ساحة المزرعة */
-        .farm-area {
-            flex: 1;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 15px;
-        }
-
-        .barn-visual {
-            font-size: 80px;
-            filter: drop-shadow(0 8px 6px rgba(0,0,0,0.3));
-            margin-bottom: 10px;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-6px); }
-        }
-
-        .chickens-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 8px;
-            max-width: 300px;
-            min-height: 60px;
-            background: rgba(0, 0, 0, 0.15);
-            padding: 10px;
-            border-radius: 20px;
-            border: 2px dashed rgba(255,255,255,0.4);
-        }
-
-        .chicken-item { font-size: 28px; animation: bounce 1.5s infinite; }
-
-        @keyframes bounce {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .status-pill {
-            background: rgba(255, 255, 255, 0.9);
-            color: #374151;
-            padding: 6px 18px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 700;
-            margin-top: 15px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-        }
-
-        /* قسم الجمع والأرباح */
-        .action-panel {
-            padding: 10px 15px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .collect-btn {
-            flex: 1.2;
-            background: linear-gradient(to bottom, #fcd34d, #f59e0b);
-            border: 2px solid #fff;
-            border-radius: 18px;
-            padding: 10px;
-            color: #78350f;
-            font-weight: 800;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #b45309;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: transform 0.1s;
-        }
-
-        .collect-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #b45309;
-        }
-
-        .collect-btn span { font-size: 11px; font-weight: 600; }
-
-        .rate-box {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.92);
-            color: #1f2937;
-            border-radius: 18px;
-            padding: 10px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .rate-box strong { display: block; font-size: 14px; color: #16a34a; }
-        .rate-box small { font-size: 11px; color: #6b7280; }
-
-        /* القائمة السفلية */
-        .bottom-nav {
-            background: #ffffff;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 5px;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #6b7280;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            padding: 4px 10px;
-            border-radius: 12px;
-        }
-
-        .nav-item.active {
-            color: #16a34a;
-            background: #dcfce7;
-        }
-
-        .nav-icon { font-size: 20px; margin-bottom: 2px; }
-
-        /* نافذة المتجر المنبثقة */
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: #fff;
-            color: #1f2937;
-            width: 100%;
-            max-width: 360px;
-            border-radius: 24px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .shop-item {
-            border: 2px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 12px;
-            margin: 12px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .buy-btn {
-            background: #16a34a;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close-modal {
-            margin-top: 10px;
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        .top-bar { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
+        .user-box { display: flex; align-items: center; gap: 8px; }
+        .avatar { width: 34px; height: 34px; border-radius: 50%; background: #f59e0b; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .btn-green { background: #26a17b; color: #fff; border: 1px solid #fff; padding: 6px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .balances { display: flex; gap: 10px; padding: 10px 15px; }
+        .card { flex: 1; background: #fff; color: #111; padding: 10px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; }
+        .farm { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; text-align: center; }
+        .grid { background: rgba(0,0,0,0.2); border: 2px dashed rgba(255,255,255,0.5); border-radius: 16px; padding: 12px; min-height: 60px; width: 90%; max-width: 300px; margin: 10px 0; font-size: 26px; }
+        .pill { background: #fff; color: #333; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+        .actions { padding: 10px 15px; display: flex; gap: 10px; }
+        .btn-gold { flex: 1.2; background: #f59e0b; color: #fff; border: 2px solid #fff; border-radius: 14px; padding: 10px; font-weight: bold; font-size: 15px; cursor: pointer; }
+        .rate { flex: 1; background: #fff; color: #111; border-radius: 14px; padding: 8px; text-align: center; }
+        .nav { background: #fff; display: flex; justify-content: space-around; padding: 8px 2px; border-radius: 16px 16px 0 0; }
+        .nav button { background: none; border: none; color: #555; font-size: 11px; font-weight: bold; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .nav button.active { color: #16a34a; }
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; padding: 15px; z-index: 99; }
+        .modal-box { background: #fff; color: #111; width: 100%; max-width: 350px; border-radius: 18px; padding: 16px; text-align: center; max-height: 85vh; overflow-y: auto; }
+        .item { border: 1px solid #ddd; border-radius: 12px; padding: 10px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; text-align: right; }
+        .wallet-addr { background: #f3f4f6; padding: 8px; border-radius: 8px; font-family: monospace; font-size: 11px; word-break: break-all; margin: 8px 0; border: 1px dashed #999; }
+        input, select { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 8px; }
+        .btn-full { width: 100%; padding: 9px; border: none; border-radius: 10px; font-weight: bold; color: #fff; cursor: pointer; margin-top: 4px; }
     </style>
 </head>
 <body>
 
-    <!-- الشريط العلوي -->
     <div>
         <div class="top-bar">
-            <div class="user-profile">
-                <div class="avatar" id="user-avatar">M</div>
-                <div class="user-info">
-                    <h4 id="user-name">Mony</h4>
-                    <span id="user-handle">@FarmPlayer</span>
-                </div>
+            <div class="user-box">
+                <div class="avatar">M</div>
+                <div><strong>Mony</strong><br><small>@FarmPlayer</small></div>
             </div>
-            <button onclick="addDemoBalance()" style="background:#26a17b; color:white; border:none; padding:6px 12px; border-radius:15px; font-weight:bold; cursor:pointer;">+ إيداع تجريبي</button>
+            <button class="btn-green" onclick="openModal('wallet-modal')">+ إيداع USDT</button>
         </div>
 
-        <!-- الأرصدة -->
         <div class="balances">
-            <div class="balance-card">
-                <div class="balance-text">
-                    <strong id="available-balance">10.00 USDT</strong>
-                    <small>الرصيد المتاح</small>
-                </div>
-                <div class="usdt-icon">₮</div>
+            <div class="card">
+                <div><strong id="bal">0.00 USDT</strong><br><small>الرصيد المتاح</small></div>
+                <span style="color:#26a17b; font-weight:bold; font-size:20px;">₮</span>
             </div>
-            <div class="balance-card">
-                <div class="balance-text">
-                    <strong id="invested-balance">0.00 USDT</strong>
-                    <small>إجمالي الاستثمار</small>
-                </div>
-                <div class="usdt-icon">₮</div>
+            <div class="card">
+                <div><strong id="inv">0.00 USDT</strong><br><small>إجمالي الاستثمار</small></div>
+                <span style="color:#26a17b; font-weight:bold; font-size:20px;">₮</span>
             </div>
         </div>
     </div>
 
-    <!-- ساحة المزرعة -->
-    <div class="farm-area">
-        <div class="barn-visual">🏡</div>
-        <div class="chickens-grid" id="chickens-container">
-            <span style="font-size: 13px; color: rgba(255,255,255,0.8);">لا يوجد دجاج في المزرعة حالياً</span>
-        </div>
-        <div class="status-pill" id="status-text">اشتر الدجاج لبدء كسب النقاط</div>
+    <div class="farm">
+        <div style="font-size:65px;">🏡</div>
+        <div class="grid" id="grid"><span style="font-size:13px;">لا يوجد دجاج حالياً</span></div>
+        <div class="pill" id="status">اشتر الدجاج لبدء كسب النقاط</div>
     </div>
 
-    <!-- لوحة الجمع والأرباح -->
     <div>
-        <div class="action-panel">
-            <button class="collect-btn" onclick="collectEarnings()">
-                🥚 جمع الأرباح
+        <div class="actions">
+            <button class="btn-gold" onclick="collect()">🥚 جمع الأرباح<br><small id="pend">المتاح: 0.0000</small></button>
+            <div class="rate"><strong id="rate" style="color:#16a34a;">0.00 USDT/يوم</strong><br><small>دورة 24 ساعة</small></div>
+        </div>
+
+        <div class="nav">
+            <button class="active" onclick="closeModals()">🏠<br>الرئيسية</button>
+            <button onclick="openModal('shop-modal')">🏪<br>المتجر</button>
+            <button onclick="openModal('gifts-modal')">🎁<br>الهدايا</button>
+            <button onclick="openModal('friends-modal')">👥<br>الأصدقاء</button>
+            <button onclick="openModal('wallet-modal')">👛<br>المحفظة</button>
+        </div>
+    </div>
+
+    <!-- المتجر -->
+    <div class="modal" id="shop-modal">
+        <div class="modal-box">
+            <h3>🏪 متجر المزرعة</h3>
+            <div class="item">
+                <div><strong>🐔 دجاجة عادية</strong><br><small style="color:#16a34a;">0.50 USDT / يوم</small></div>
+                <button class="btn-green" onclick="buy(5, 0.5, '🐔')">شراء (5$)</button>
+            </div>
+            <div class="item">
+                <div><strong>🐓 دجاجة ذهبية</strong><br><small style="color:#16a34a;">1.50 USDT / يوم</small></div>
+                <button class="btn-green" onclick="buy(12, 1.5, '🐓')">شراء (12$)</button>
+            </div>
+            <button class="btn-full" style="background:#ef4444;" onclick="closeModals()">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- الهدايا -->
+    <div class="modal" id="gifts-modal">
+        <div class="modal-box">
+            <h3>🎁 الهدايا اليومية</h3>
+            <div class="item">
+                <div><strong>🎉 هدية الدخول</strong><br><small style="color:#16a34a;">+0.05 USDT</small></div>
+                <button class="btn-green" id="g1" onclick="claimGift(0.05, 'g1')">استلام</button>
+            </div>
+            <div class="item">
+                <div><strong>📢 مكافأة الترحيب</strong><br><small style="color:#16a34a;">+0.10 USDT</small></div>
+                <button class="btn-green" id="g2" onclick="claimGift(0.10, 'g2')">استلام</button>
+            </div>
+            <button class="btn-full" style="background:#ef4444;" onclick="closeModals()">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- الأصدقاء -->
+    <div class="modal" id="friends-modal">
+        <div class="modal-box">
+            <h3>👥 دعوة الأصدقاء</h3>
+            <p style="font-size:12px; margin:6px 0;">اربح <strong>0.02$</strong> لكل صديق و<strong>0.20$</strong> لكل 10 أصدقاء</p>
+            <div class="wallet-addr" id="ref">https://t.me</div>
+            <button class="btn-full" style="background:#2563eb;" onclick="copyAddr('https://t.me')">📋 نسخ رابط الدعوة</button>
+            <button class="btn-full" style="background:#ef4444;" onclick="closeModals()">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- المحفظة (إيداع وسحب) -->
+    <div class="modal" id="wallet-modal">
+        <div class="modal-box">
+            <h3>👛 المحفظة</h3>
+            <p style="font-size:12px; color:#16a34a; font-weight:bold; margin:5px 0;">إيداع USDT (شبكة BEP20 فقط)</p>
+            <div class="wallet-addr">0xcdEeeD85344992116D7f0B8991d316d891e79B4E</div>
+            <button class="btn-full" style="background:#2563eb;" onclick="copyAddr('0xcdEeeD85344992116D7f0B8991d316d891e79B4E')">📋 نسخ عنوان المحفظة</button>
+            
+            <hr style="margin:10px 0;">
+            <p style="font-size:12px; font-weight:bold; margin-bottom:5px;">💸 طلب سحب الأرباح</p>
+            <select id="w-net">
+                <option value="BEP20">شبكة BEP20</option>
+                <option value="TRC20">شبكة TRC20</option>
+                <option value="TON">شبكة TON</option>
+            </select>
+            <input type="number" id="w-amt" placeholder="المبلغ المراد سحبه (USDT)">
+            <input type="text" id="w-addr" placeholder="عنوان محفظتك">
+            <button class="btn-full" style="background:#f59e0b;" onclick="withdraw()">إرسال طلب السحب</button>
+            <button class="btn-full" style="background:#ef4444;" onclick="closeModals()">إغلاق</button>
+        </div>
+    </div>
+
+    <script>
+        let bal = 0, inv = 0, rate = 0, pend = 0, list = [];
+
+        function update() {
+            document.getElementById('bal').innerText = bal.toFixed(2) + ' USDT';
+            document.getElementById('inv').innerText = inv.toFixed(2) + ' USDT';
+            document.getElementById('rate').innerText = rate.toFixed(2) + ' USDT/يوم';
+            document.getElementById('pend').innerText = 'المتاح: ' + pend.toFixed(4);
+            if (list.length > 0) {
+                document.getElementById('grid').innerHTML = list.join(' ');
+                document.getElementById('status').innerText = 'لديك ' + list.length + ' دجاجات تعمل';
+            }
+        }
+
+        setInterval(() => { if (rate > 0) { pend += rate / 86400; update(); } }, 1000);
+        function openModal(id) { closeModals(); document.getElementById(id).style.display = 'flex'; }
+        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+
+        function buy(cost, r, icon) {
+            if (bal >= cost) { bal -= cost; inv += cost; rate += r; list.push(icon); update(); closeModals(); }
