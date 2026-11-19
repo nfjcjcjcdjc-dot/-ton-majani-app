@@ -1,164 +1,171 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مزرعة الدجاج</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-        body {
-            background: #5ea832; color: #fff; min-height: 100vh;
-            display: flex; flex-direction: column; justify-content: space-between;
-        }
-        .top-bar { padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
-        .user-box { display: flex; align-items: center; gap: 8px; }
-        .avatar { width: 34px; height: 34px; border-radius: 50%; background: #f59e0b; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-        .btn-green { background: #26a17b; color: #fff; border: 1px solid #fff; padding: 6px 12px; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        .balances { display: flex; gap: 10px; padding: 10px 15px; }
-        .card { flex: 1; background: #fff; color: #111; padding: 10px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; }
-        .farm { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; text-align: center; }
-        .grid { background: rgba(0,0,0,0.2); border: 2px dashed rgba(255,255,255,0.5); border-radius: 16px; padding: 12px; min-height: 60px; width: 90%; max-width: 300px; margin: 10px 0; font-size: 26px; }
-        .pill { background: #fff; color: #333; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: bold; }
-        .actions { padding: 10px 15px; display: flex; gap: 10px; }
-        .btn-gold { flex: 1.2; background: #f59e0b; color: #fff; border: 2px solid #fff; border-radius: 14px; padding: 10px; font-weight: bold; font-size: 15px; cursor: pointer; }
-        .rate { flex: 1; background: #fff; color: #111; border-radius: 14px; padding: 8px; text-align: center; }
-        .nav { background: #fff; display: flex; justify-content: space-around; padding: 8px 2px; border-radius: 16px 16px 0 0; }
-        .nav button { background: none; border: none; color: #555; font-size: 11px; font-weight: bold; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-        .nav button.active { color: #16a34a; }
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); align-items: center; justify-content: center; padding: 15px; z-index: 99; }
-        .modal-box { background: #fff; color: #111; width: 100%; max-width: 350px; border-radius: 18px; padding: 16px; text-align: center; max-height: 85vh; overflow-y: auto; }
-        .item { border: 1px solid #ddd; border-radius: 12px; padding: 10px; margin: 8px 0; display: flex; justify-content: space-between; align-items: center; text-align: right; }
-        .wallet-addr { background: #f3f4f6; padding: 8px; border-radius: 8px; font-family: monospace; font-size: 11px; word-break: break-all; margin: 8px 0; border: 1px dashed #999; }
-        input, select { width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 8px; }
-        .btn-full { width: 100%; padding: 9px; border: none; border-radius: 10px; font-weight: bold; color: #fff; cursor: pointer; margin-top: 4px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مزرعة الدجاج</title>
+<style>
+body { margin: 0; font-family: sans-serif; background: #5ea832; color: #fff; display: flex; flex-direction: column; height: 100vh; }
+.top { padding: 12px; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.25); }
+.cards { display: flex; gap: 10px; padding: 10px; }
+.card { flex: 1; background: #fff; color: #111; padding: 10px; border-radius: 12px; font-weight: bold; }
+.center { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.box { background: rgba(0,0,0,0.2); border: 2px dashed #fff; border-radius: 15px; padding: 15px; width: 85%; font-size: 28px; margin: 10px 0; }
+.actions { display: flex; gap: 10px; padding: 10px; }
+.btn-collect { flex: 1; background: #f59e0b; color: #fff; border: 2px solid #fff; border-radius: 12px; padding: 10px; font-weight: bold; font-size: 16px; }
+.rate { flex: 1; background: #fff; color: #16a34a; border-radius: 12px; padding: 10px; text-align: center; font-weight: bold; }
+.nav { background: #fff; display: flex; justify-content: space-around; padding: 10px 0; border-radius: 15px 15px 0 0; }
+.nav button { background: none; border: none; font-weight: bold; color: #333; font-size: 13px; }
+.page { display: none; position: fixed; inset: 0; background: #fff; color: #111; padding: 20px; overflow-y: auto; z-index: 10; }
+.row { border: 1px solid #ccc; padding: 12px; border-radius: 10px; margin: 10px 0; display: flex; justify-content: space-between; align-items: center; }
+.btn { background: #16a34a; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; }
+.btn-red { background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 15px; }
+input, select { width: 100%; padding: 10px; margin: 6px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+.addr { background: #eee; padding: 10px; border-radius: 8px; word-break: break-all; font-family: monospace; font-size: 12px; margin: 8px 0; }
+</style>
 </head>
 <body>
 
-    <div>
-        <div class="top-bar">
-            <div class="user-box">
-                <div class="avatar">M</div>
-                <div><strong>Mony</strong><br><small>@FarmPlayer</small></div>
-            </div>
-            <button class="btn-green" onclick="openModal('wallet-modal')">+ إيداع USDT</button>
-        </div>
+<div class="top">
+  <div><b>👤 Mony</b></div>
+  <button class="btn" onclick="showPage('p-wallet')">+ إيداع USDT</button>
+</div>
 
-        <div class="balances">
-            <div class="card">
-                <div><strong id="bal">0.00 USDT</strong><br><small>الرصيد المتاح</small></div>
-                <span style="color:#26a17b; font-weight:bold; font-size:20px;">₮</span>
-            </div>
-            <div class="card">
-                <div><strong id="inv">0.00 USDT</strong><br><small>إجمالي الاستثمار</small></div>
-                <span style="color:#26a17b; font-weight:bold; font-size:20px;">₮</span>
-            </div>
-        </div>
-    </div>
+<div class="cards">
+  <div class="card"><small>الرصيد المتاح</small><div id="v-bal">0.00 USDT</div></div>
+  <div class="card"><small>الاستثمار</small><div id="v-inv">0.00 USDT</div></div>
+</div>
 
-    <div class="farm">
-        <div style="font-size:65px;">🏡</div>
-        <div class="grid" id="grid"><span style="font-size:13px;">لا يوجد دجاج حالياً</span></div>
-        <div class="pill" id="status">اشتر الدجاج لبدء كسب النقاط</div>
-    </div>
+<div class="center">
+  <div style="font-size:60px;">🏡</div>
+  <div class="box" id="v-farm">لا يوجد دجاج حالياً</div>
+  <div style="background:#fff; color:#333; padding:5px 15px; border-radius:20px; font-size:13px;" id="v-msg">اشتر الدجاج لبدء الربح</div>
+</div>
 
-    <div>
-        <div class="actions">
-            <button class="btn-gold" onclick="collect()">🥚 جمع الأرباح<br><small id="pend">المتاح: 0.0000</small></button>
-            <div class="rate"><strong id="rate" style="color:#16a34a;">0.00 USDT/يوم</strong><br><small>دورة 24 ساعة</small></div>
-        </div>
+<div class="actions">
+  <button class="btn-collect" onclick="doCollect()">🥚 جمع الأرباح<br><small id="v-pend">0.0000</small></button>
+  <div class="rate"><div id="v-rate">0.00 / يوم</div><small style="color:#666;">دورة 24 ساعة</small></div>
+</div>
 
-        <div class="nav">
-            <button class="active" onclick="closeModals()">🏠<br>الرئيسية</button>
-            <button onclick="openModal('shop-modal')">🏪<br>المتجر</button>
-            <button onclick="openModal('gifts-modal')">🎁<br>الهدايا</button>
-            <button onclick="openModal('friends-modal')">👥<br>الأصدقاء</button>
-            <button onclick="openModal('wallet-modal')">👛<br>المحفظة</button>
-        </div>
-    </div>
+<div class="nav">
+  <button onclick="hidePages()">🏠<br>الرئيسية</button>
+  <button onclick="showPage('p-shop')">🏪<br>المتجر</button>
+  <button onclick="showPage('p-gift')">🎁<br>الهدايا</button>
+  <button onclick="showPage('p-ref')">👥<br>الأصدقاء</button>
+  <button onclick="showPage('p-wallet')">👛<br>المحفظة</button>
+</div>
 
-    <!-- المتجر -->
-    <div class="modal" id="shop-modal">
-        <div class="modal-box">
-            <h3>🏪 متجر المزرعة</h3>
-            <div class="item">
-                <div><strong>🐔 دجاجة عادية</strong><br><small style="color:#16a34a;">0.50 USDT / يوم</small></div>
-                <button class="btn-green" onclick="buy(5, 0.5, '🐔')">شراء (5$)</button>
-            </div>
-            <div class="item">
-                <div><strong>🐓 دجاجة ذهبية</strong><br><small style="color:#16a34a;">1.50 USDT / يوم</small></div>
-                <button class="btn-green" onclick="buy(12, 1.5, '🐓')">شراء (12$)</button>
-            </div>
-            <button class="btn-full" style="background:#ef4444;" onclick="closeModals()">إغلاق</button>
-        </div>
-    </div>
+<!-- المتجر -->
+<div id="p-shop" class="page">
+  <h2>🏪 متجر الدجاج</h2>
+  <div class="row">
+    <div><b>🐔 دجاجة عادية</b><br><small>الربح: 0.50 USDT/يوم</small></div>
+    <button class="btn" onclick="doBuy(5, 0.5, '🐔')">شراء 5$</button>
+  </div>
+  <div class="row">
+    <div><b>🐓 دجاجة ذهبية</b><br><small>الربح: 1.50 USDT/يوم</small></div>
+    <button class="btn" onclick="doBuy(12, 1.5, '🐓')">شراء 12$</button>
+  </div>
+  <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
+</div>
 
-    <!-- الهدايا -->
-    <div class="modal" id="gifts-modal">
-        <div class="modal-box">
-            <h3>🎁 الهدايا اليومية</h3>
-            <div class="item">
-                <div><strong>🎉 هدية الدخول</strong><br><small style="color:#16a34a;">+0.05 USDT</small></div>
-                <button class="btn-green" id="g1" onclick="claimGift(0.05, 'g1')">استلام</button>
-            </div>
-            <div class="item">
-                <div><strong>📢 مكافأة الترحيب</strong><br><small style="color:#16a34a;">+0.10 USDT</small></div>
-                <button class="btn-green" id="g2" onclick="claimGift(0.10, 'g2')">استلام</button>
-            </div>
-            <button class="btn-full" style="background:#ef4444;" onclick="closeModals()">إغلاق</button>
-        </div>
-    </div>
+<!-- الهدايا -->
+<div id="p-gift" class="page">
+  <h2>🎁 الهدايا اليومية</h2>
+  <div class="row">
+    <div><b>🎉 هدية الدخول اليومي</b><br><small>+0.05 USDT</small></div>
+    <button class="btn" id="b-g1" onclick="doGift(0.05, 'b-g1')">استلام</button>
+  </div>
+  <div class="row">
+    <div><b>📢 مكافأة الترحيب</b><br><small>+0.10 USDT</small></div>
+    <button class="btn" id="b-g2" onclick="doGift(0.10, 'b-g2')">استلام</button>
+  </div>
+  <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
+</div>
 
-    <!-- الأصدقاء -->
-    <div class="modal" id="friends-modal">
-        <div class="modal-box">
-            <h3>👥 دعوة الأصدقاء</h3>
-            <p style="font-size:12px; margin:6px 0;">اربح <strong>0.02$</strong> لكل صديق و<strong>0.20$</strong> لكل 10 أصدقاء</p>
-            <div class="wallet-addr" id="ref">https://t.me</div>
-            <button class="btn-full" style="background:#2563eb;" onclick="copyAddr('https://t.me')">📋 نسخ رابط الدعوة</button>
-            <button class="btn-full" style="background:#ef4444;" onclick="closeModals()">إغلاق</button>
-        </div>
-    </div>
+<!-- الأصدقاء -->
+<div id="p-ref" class="page">
+  <h2>👥 دعوة الأصدقاء</h2>
+  <p>اربح <b>0.02 USDT</b> عن كل صديق، و <b>0.20 USDT</b> لكل 10 أصدقاء!</p>
+  <div class="addr">https://t.me</div>
+  <button class="btn" style="width:100%;" onclick="doCopy('https://t.me')">📋 نسخ رابط الدعوة</button>
+  <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
+</div>
 
-    <!-- المحفظة (إيداع وسحب) -->
-    <div class="modal" id="wallet-modal">
-        <div class="modal-box">
-            <h3>👛 المحفظة</h3>
-            <p style="font-size:12px; color:#16a34a; font-weight:bold; margin:5px 0;">إيداع USDT (شبكة BEP20 فقط)</p>
-            <div class="wallet-addr">0xcdEeeD85344992116D7f0B8991d316d891e79B4E</div>
-            <button class="btn-full" style="background:#2563eb;" onclick="copyAddr('0xcdEeeD85344992116D7f0B8991d316d891e79B4E')">📋 نسخ عنوان المحفظة</button>
-            
-            <hr style="margin:10px 0;">
-            <p style="font-size:12px; font-weight:bold; margin-bottom:5px;">💸 طلب سحب الأرباح</p>
-            <select id="w-net">
-                <option value="BEP20">شبكة BEP20</option>
-                <option value="TRC20">شبكة TRC20</option>
-                <option value="TON">شبكة TON</option>
-            </select>
-            <input type="number" id="w-amt" placeholder="المبلغ المراد سحبه (USDT)">
-            <input type="text" id="w-addr" placeholder="عنوان محفظتك">
-            <button class="btn-full" style="background:#f59e0b;" onclick="withdraw()">إرسال طلب السحب</button>
-            <button class="btn-full" style="background:#ef4444;" onclick="closeModals()">إغلاق</button>
-        </div>
-    </div>
+<!-- المحفظة -->
+<div id="p-wallet" class="page">
+  <h2>👛 المحفظة (إيداع وسحب)</h2>
+  <p><b>1. إيداع USDT (شبكة BEP20 فقط):</b></p>
+  <div class="addr">0xcdEeeD85344992116D7f0B8991d316d891e79B4E</div>
+  <button class="btn" style="width:100%;" onclick="doCopy('0xcdEeeD85344992116D7f0B8991d316d891e79B4E')">📋 نسخ عنوان الإيداع</button>
+  <hr style="margin:15px 0;">
+  <p><b>2. طلب سحب الأرباح:</b></p>
+  <select id="w-net">
+    <option value="BEP20">شبكة BEP20</option>
+    <option value="TRC20">شبكة TRC20</option>
+    <option value="TON">شبكة TON</option>
+  </select>
+  <input type="number" id="w-amt" placeholder="المبلغ (USDT)">
+  <input type="text" id="w-adr" placeholder="عنوان محفظتك">
+  <button class="btn" style="width:100%; background:#f59e0b;" onclick="doWithdraw()">إرسال طلب السحب</button>
+  <button class="btn-red" onclick="hidePages()">رجوع للرئيسية</button>
+</div>
 
-    <script>
-        let bal = 0, inv = 0, rate = 0, pend = 0, list = [];
+<script>
+var bal = 0, inv = 0, rate = 0, pend = 0, birds = [];
 
-        function update() {
-            document.getElementById('bal').innerText = bal.toFixed(2) + ' USDT';
-            document.getElementById('inv').innerText = inv.toFixed(2) + ' USDT';
-            document.getElementById('rate').innerText = rate.toFixed(2) + ' USDT/يوم';
-            document.getElementById('pend').innerText = 'المتاح: ' + pend.toFixed(4);
-            if (list.length > 0) {
-                document.getElementById('grid').innerHTML = list.join(' ');
-                document.getElementById('status').innerText = 'لديك ' + list.length + ' دجاجات تعمل';
-            }
-        }
+function showPage(id) {
+  hidePages();
+  document.getElementById(id).style.display = 'block';
+}
+function hidePages() {
+  var pages = document.getElementsByClassName('page');
+  for (var i = 0; i < pages.length; i++) { pages[i].style.display = 'none'; }
+}
+function refresh() {
+  document.getElementById('v-bal').innerText = bal.toFixed(2) + ' USDT';
+  document.getElementById('v-inv').innerText = inv.toFixed(2) + ' USDT';
+  document.getElementById('v-rate').innerText = rate.toFixed(2) + ' / يوم';
+  document.getElementById('v-pend').innerText = pend.toFixed(4);
+  if (birds.length > 0) {
+    document.getElementById('v-farm').innerText = birds.join(' ');
+    document.getElementById('v-msg').innerText = 'لديك ' + birds.length + ' دجاجات';
+  }
+}
+setInterval(function() {
+  if (rate > 0) { pend += rate / 86400; refresh(); }
+}, 1000);
 
-        setInterval(() => { if (rate > 0) { pend += rate / 86400; update(); } }, 1000);
-        function openModal(id) { closeModals(); document.getElementById(id).style.display = 'flex'; }
-        function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-
-        function buy(cost, r, icon) {
-            if (bal >= cost) { bal -= cost; inv += cost; rate += r; list.push(icon); update(); closeModals(); }
+function doBuy(c, r, icon) {
+  if (bal >= c) { bal -= c; inv += c; rate += r; birds.push(icon); refresh(); hidePages(); }
+  else { alert('الرصيد غير كافٍ! اجمع الهدايا أو قم بالإيداع.'); }
+}
+function doCollect() {
+  if (pend > 0) { bal += pend; pend = 0; refresh(); alert('تم جمع الأرباح!'); }
+  else { alert('لا توجد أرباح حالياً.'); }
+}
+function doGift(amt, btnId) {
+  bal += amt; refresh();
+  var b = document.getElementById(btnId);
+  b.disabled = true; b.innerText = 'تم ✓';
+  alert('حصلت على ' + amt + ' USDT');
+}
+function doWithdraw() {
+  var a = parseFloat(document.getElementById('w-amt').value);
+  var ad = document.getElementById('w-adr').value;
+  var net = document.getElementById('w-net').value;
+  if (!a || a <= 0 || ad.length < 6) { alert('أدخل بيانات صحيحة'); return; }
+  if (a > bal) { alert('رصيدك غير كافٍ'); return; }
+  bal -= a; refresh(); hidePages();
+  alert('تم طلب سحب ' + a + ' USDT على شبكة ' + net);
+}
+function doCopy(t) {
+  var el = document.createElement('textarea');
+  el.value = t; document.body.appendChild(el);
+  el.select(); document.execCommand('copy');
+  document.body.removeChild(el);
+  alert('تم النسخ:\n' + t);
+}
+</script>
+</body>
+</html>
